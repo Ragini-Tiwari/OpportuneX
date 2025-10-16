@@ -3,11 +3,220 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpportuneX</title>
+    <title>OpportuneX - Job Board Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background: #f4f6f8;
+        color: #333;
+      }
+
+      /* Navbar */
+      header {
+        background: #2a2f4f;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      /* Hero / Heading */
+      .hero {
+        text-align: center;
+        padding: 2rem 1rem;
+        background: #ffffff;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .hero h2 {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Search and Filter */
+      .filters {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .filters input,
+      .filters select,
+      .filters button {
+        padding: 0.7rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      .filters button {
+        background: #2a2f4f;
+        color: white;
+        cursor: pointer;
+      }
+
+      .filters button:hover {
+        background: #41497a;
+      }
+
+      /* Job Listings */
+      .job-listings {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+      }
+
+      .job-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+      }
+
+      .job-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .job-card h3 {
+        color: #2a2f4f;
+        margin-bottom: 0.5rem;
+      }
+
+      .job-card p {
+        margin: 0.3rem 0;
+      }
+
+      .job-card .apply-btn {
+        margin-top: 1rem;
+        background: #2a2f4f;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.2rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .job-card .apply-btn:hover {
+        background: #41497a;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 1.5rem;
+        background: #2a2f4f;
+        color: white;
+        margin-top: 2rem;
+      }
+    </style>
   </head>
   <body>
-   <h1>Welcome to OpportuneX</h1>
-   <h2>This is my Job Board Project</h2>
+    <!-- Navbar -->
+    <header>
+      <h1>OpportuneX</h1>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">Jobs</a>
+        <a href="#">Companies</a>
+        <a href="#">Post a Job</a>
+        <a href="#">Login</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <h2>Welcome to OpportuneX</h2>
+      <p>Your one-stop platform to find the best career opportunities 🚀</p>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters">
+      <input type="text" placeholder="Search job title..." />
+      <select>
+        <option>All Categories</option>
+        <option>Frontend Developer</option>
+        <option>Backend Developer</option>
+        <option>Data Scientist</option>
+        <option>Product Manager</option>
+      </select>
+      <select>
+        <option>All Locations</option>
+        <option>Remote</option>
+        <option>India</option>
+        <option>USA</option>
+        <option>Europe</option>
+      </select>
+      <button>Search</button>
+    </section>
+
+    <!-- Job Listings -->
+    <section class="job-listings">
+      <div class="job-card">
+        <h3>Frontend Developer</h3>
+        <p>Company: TechNova</p>
+        <p>Location: Remote</p>
+        <p>Salary: ₹10–15 LPA</p>
+        <button class="apply-btn">Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <h3>Backend Engineer</h3>
+        <p>Company: CodeWorks</p>
+        <p>Location: India</p>
+        <p>Salary: ₹12–18 LPA</p>
+        <button class="apply-btn">Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <h3>Data Scientist</h3>
+        <p>Company: AI Labs</p>
+        <p>Location: USA</p>
+        <p>Salary: $100K–130K</p>
+        <button class="apply-btn">Apply Now</button>
+      </div>
+
+      <div class="job-card">
+        <h3>Product Manager</h3>
+        <p>Company: StartupX</p>
+        <p>Location: Europe</p>
+        <p>Salary: €80K–110K</p>
+        <button class="apply-btn">Apply Now</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2025 OpportuneX. All rights reserved.</p>
+    </footer>
   </body>
 </html>
-
