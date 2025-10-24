@@ -1,68 +1,156 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+ 
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+      body {
+        background: #f4f6f8;
+        color: #333;
+      }
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+      /* Navbar */
+      header {
+        background: #2a2f4f;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      /* Hero / Heading */
+      .hero {
+        text-align: center;
+        padding: 2rem 1rem;
+        background: #ffffff;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .hero h2 {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Search and Filter */
+      .filters {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .filters input,
+      .filters select,
+      .filters button {
+        padding: 0.7rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1rem;
+      }
+
+      .filters button {
+        background: #2a2f4f;
+        color: white;
+        cursor: pointer;
+      }
+
+      .filters button:hover {
+        background: #41497a;
+      }
+
+      /* Job Listings */
+      .job-listings {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        padding: 2rem;
+      }
+
+      .job-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease;
+      }
+
+      .job-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .job-card h3 {
+        color: #2a2f4f;
+        margin-bottom: 0.5rem;
+      }
+
+      .job-card p {
+        margin: 0.3rem 0;
+      }
+
+      .job-card .apply-btn {
+        margin-top: 1rem;
+        background: #2a2f4f;
+        color: white;
+        border: none;
+        padding: 0.7rem 1.2rem;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .job-card .apply-btn:hover {
+        background: #41497a;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 1.5rem;
+        background: #2a2f4f;
+        color: white;
+        margin-top: 2rem;
+      }
+      /* Animation setup */
+.job-card {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s ease-in-out;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+.job-card.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+/* Optional hover animation for apply button */
+.apply-btn {
+  transition: all 0.3s ease;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.apply-btn:hover {
+  transform: scale(1.05);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+  
