@@ -33,3 +33,25 @@ const observer = new IntersectionObserver(
 jobCards.forEach((card) => {
   observer.observe(card);
 });
+// =======================
+// DARK MODE TOGGLE
+// =======================
+const themeToggle = document.getElementById("theme-toggle");
+
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+  document.body.classList.add("dark-mode");
+  themeToggle.textContent = "☀️";
+}
+
+// Toggle theme on click
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+
+  const isDark = document.body.classList.contains("dark-mode");
+  themeToggle.textContent = isDark ? "☀️" : "🌙";
+
+  // Save preference
+  localStorage.setItem("theme", isDark ? "dark" : "light");
+});
+

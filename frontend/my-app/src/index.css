@@ -4,7 +4,10 @@
         padding: 0;
         box-sizing: border-box;
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+         transition: background 0.3s ease, color 0.3s ease;
       }
+    
+
 
       body {
         background: #f4f6f8;
@@ -151,6 +154,63 @@
 
 .apply-btn:hover {
   transform: scale(1.05);
+}
+/* ========== Dark Mode Styles ========== */
+
+:root {
+  --bg-color: #f4f6f8;
+  --text-color: #333;
+  --card-bg: #fff;
+  --nav-bg: #2a2f4f;
+  --button-bg: #2a2f4f;
+  --button-text: #fff;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e4e4e4;
+  --card-bg: #1e1e1e;
+  --nav-bg: #0e0e0e;
+  --button-bg: #41497a;
+  --button-text: #fff;
+}
+
+/* Apply variables throughout */
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+header {
+  background: var(--nav-bg);
+  transition: background 0.5s ease;
+}
+
+.job-card {
+  background: var(--card-bg);
+  color: var(--text-color);
+  transition: all 0.5s ease;
+}
+
+.apply-btn {
+  background: var(--button-bg);
+  color: var(--button-text);
+}
+
+/* Toggle Button */
+#theme-toggle {
+  margin-left: 1rem;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#theme-toggle:hover {
+  transform: scale(1.1);
 }
 
   
