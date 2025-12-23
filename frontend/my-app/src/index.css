@@ -1,216 +1,27 @@
- 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-         transition: background 0.3s ease, color 0.3s ease;
-      }
-    
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-
-      body {
-        background: #f4f6f8;
-        color: #333;
-      }
-
-      /* Navbar */
-      header {
-        background: #2a2f4f;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 2rem;
-      }
-
-      header h1 {
-        font-size: 1.5rem;
-      }
-
-      nav a {
-        color: white;
-        text-decoration: none;
-        margin-left: 1.5rem;
-        font-weight: 500;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-      }
-
-      /* Hero / Heading */
-      .hero {
-        text-align: center;
-        padding: 2rem 1rem;
-        background: #ffffff;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      }
-
-      .hero h2 {
-        margin-bottom: 0.5rem;
-      }
-
-      /* Search and Filter */
-      .filters {
-        max-width: 1100px;
-        margin: 0 auto;
-        display: flex;
-        gap: 1rem;
-        padding: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-      }
-
-      .filters input,
-      .filters select,
-      .filters button {
-        padding: 0.7rem 1rem;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 1rem;
-      }
-
-      .filters button {
-        background: #2a2f4f;
-        color: white;
-        cursor: pointer;
-      }
-
-      .filters button:hover {
-        background: #41497a;
-      }
-
-      /* Job Listings */
-      .job-listings {
-        max-width: 1100px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        padding: 2rem;
-      }
-
-      .job-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease;
-      }
-
-      .job-card:hover {
-        transform: translateY(-5px);
-      }
-
-      .job-card h3 {
-        color: #2a2f4f;
-        margin-bottom: 0.5rem;
-      }
-
-      .job-card p {
-        margin: 0.3rem 0;
-      }
-
-      .job-card .apply-btn {
-        margin-top: 1rem;
-        background: #2a2f4f;
-        color: white;
-        border: none;
-        padding: 0.7rem 1.2rem;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .job-card .apply-btn:hover {
-        background: #41497a;
-      }
-
-      /* Footer */
-      footer {
-        text-align: center;
-        padding: 1.5rem;
-        background: #2a2f4f;
-        color: white;
-        margin-top: 2rem;
-      }
-      /* Animation setup */
-.job-card {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.6s ease-in-out;
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
 }
 
-.job-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Optional hover animation for apply button */
-.apply-btn {
-  transition: all 0.3s ease;
-}
-
-.apply-btn:hover {
-  transform: scale(1.05);
-}
-/* ========== Dark Mode Styles ========== */
-
-:root {
-  --bg-color: #f4f6f8;
-  --text-color: #333;
-  --card-bg: #fff;
-  --nav-bg: #2a2f4f;
-  --button-bg: #2a2f4f;
-  --button-text: #fff;
-}
-
-body.dark-mode {
-  --bg-color: #121212;
-  --text-color: #e4e4e4;
-  --card-bg: #1e1e1e;
-  --nav-bg: #0e0e0e;
-  --button-bg: #41497a;
-  --button-text: #fff;
-}
-
-/* Apply variables throughout */
-body {
-  background: var(--bg-color);
-  color: var(--text-color);
-  transition: background 0.5s ease, color 0.5s ease;
-}
-
-header {
-  background: var(--nav-bg);
-  transition: background 0.5s ease;
-}
-
-.job-card {
-  background: var(--card-bg);
-  color: var(--text-color);
-  transition: all 0.5s ease;
-}
-
-.apply-btn {
-  background: var(--button-bg);
-  color: var(--button-text);
-}
-
-/* Toggle Button */
-#theme-toggle {
-  margin-left: 1rem;
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 1.3rem;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-#theme-toggle:hover {
-  transform: scale(1.1);
-}
-
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+  }
   
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+}
