@@ -1,95 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpportuneX - Job Board Dashboard</title>
-    <link rel="stylesheet" href="./src/index.css">
-
+    <title>OpportuneX - Job Board Platform</title>
   </head>
   <body>
-    
-    <!-- Navbar -->
-    <header>
-      <h1>OpportuneX</h1>
-      <nav>
-        <a href="#">Home</a>
-        <a href="#">Jobs</a>
-        <a href="#">Companies</a>
-        <a href="#">Post a Job</a>
-        <a href="#">Login</a>
-        <button id="theme-toggle"> 🌙</button>
-      </nav>
-    </header>
-
-    <!-- Hero -->
-    <section class="hero">
-      <h2>Welcome to OpportuneX</h2>
-      <p>Your one-stop platform to find the best career opportunities 🚀</p>
-    </section>
-
-    
-    <!-- Filters -->
-    <section class="filters">
-      <input type="text" placeholder="Search job title..." />
-      <select>
-        <option>All Categories</option>
-        <option>Frontend Developer</option>
-        <option>Backend Developer</option>
-        <option>Data Scientist</option>
-        <option>Product Manager</option>
-      </select>
-      <select>
-        <option>All Locations</option>
-        <option>Remote</option>
-        <option>India</option>
-        <option>USA</option>
-        <option>Europe</option>
-      </select>
-      <button>Search</button>
-    </section>
-
-    
-    <!-- Job Listings -->
-    <section class="job-listings">
-      <div class="job-card">
-        <h3>Frontend Developer</h3>
-        <p>Company: TechNova</p>
-        <p>Location: Remote</p>
-        <p>Salary: ₹10–15 LPA</p>
-        <button class="apply-btn">Apply Now</button>
-      </div>
-
-      <div class="job-card">
-        <h3>Backend Engineer</h3>
-        <p>Company: CodeWorks</p>
-        <p>Location: India</p>
-        <p>Salary: ₹12–18 LPA</p>
-        <button class="apply-btn">Apply Now</button>
-      </div>
-
-      <div class="job-card">
-        <h3>Data Scientist</h3>
-        <p>Company: AI Labs</p>
-        <p>Location: USA</p>
-        <p>Salary: $100K–130K</p>
-        <button class="apply-btn">Apply Now</button>
-      </div>
-
-      <div class="job-card">
-        <h3>Product Manager</h3>
-        <p>Company: StartupX</p>
-        <p>Location: Europe</p>
-        <p>Salary: €80K–110K</p>
-        <button class="apply-btn">Apply Now</button>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-      <p>© 2025 OpportuneX. All rights reserved.</p>
-    </footer>
-     <script src="./src/script.js"></script>
-
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
