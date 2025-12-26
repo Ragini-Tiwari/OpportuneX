@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Briefcase, TrendingUp, Users, Shield } from "lucide-react";
 import { motion } from "framer-motion";
-import BackgroundGrid from "../components/BackgroundGrid";
 
 const Home = () => {
     const fadeIn = {
@@ -21,7 +20,6 @@ const Home = () => {
 
     return (
         <div className="min-h-screen relative overflow-hidden text-gray-100">
-            <BackgroundGrid />
 
             {/* Content Wrapper */}
             <div className="relative z-10">

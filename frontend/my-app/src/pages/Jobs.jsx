@@ -55,18 +55,18 @@ const Jobs = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen relative z-10 pb-12">
             {/* Search Section */}
-            <div className="bg-white shadow-sm py-8">
+            <div className="bg-black-900/50 backdrop-blur-md border-b border-white/10 shadow-lg py-8">
                 <div className="container mx-auto px-4">
-                    <h1 className="text-3xl font-bold mb-6">Find Your Next Opportunity</h1>
+                    <h1 className="text-3xl font-bold mb-6 text-gray-100">Find Your Next Opportunity</h1>
 
                     <form onSubmit={handleSearch} className="space-y-4">
                         <div className="grid md:grid-cols-4 gap-4">
                             {/* Search Input */}
                             <div className="relative md:col-span-2">
                                 <Search
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
                                     size={20}
                                 />
                                 <input
@@ -81,7 +81,7 @@ const Jobs = () => {
                             {/* Location */}
                             <div className="relative">
                                 <MapPin
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
                                     size={20}
                                 />
                                 <input
@@ -104,7 +104,7 @@ const Jobs = () => {
                             <select
                                 value={filters.category}
                                 onChange={(e) => handleFilterChange("category", e.target.value)}
-                                className="input-field"
+                                className="input-field text-gray-300 [&>option]:bg-black-900"
                             >
                                 <option value="">All Categories</option>
                                 <option value="Engineering">Engineering</option>
@@ -121,7 +121,7 @@ const Jobs = () => {
                             <select
                                 value={filters.jobType}
                                 onChange={(e) => handleFilterChange("jobType", e.target.value)}
-                                className="input-field"
+                                className="input-field text-gray-300 [&>option]:bg-black-900"
                             >
                                 <option value="">All Job Types</option>
                                 <option value="Full-time">Full-time</option>
@@ -133,7 +133,7 @@ const Jobs = () => {
                             <select
                                 value={filters.workMode}
                                 onChange={(e) => handleFilterChange("workMode", e.target.value)}
-                                className="input-field"
+                                className="input-field text-gray-300 [&>option]:bg-black-900"
                             >
                                 <option value="">All Work Modes</option>
                                 <option value="Remote">Remote</option>
@@ -149,13 +149,13 @@ const Jobs = () => {
             <div className="container mx-auto px-4 py-8">
                 {loading ? (
                     <div className="text-center py-12">
-                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-600 border-t-transparent"></div>
-                        <p className="mt-4 text-gray-600">Loading jobs...</p>
+                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
+                        <p className="mt-4 text-gray-400">Loading jobs...</p>
                     </div>
                 ) : jobs.length === 0 ? (
                     <div className="text-center py-12">
-                        <Briefcase size={48} className="mx-auto text-gray-400 mb-4" />
-                        <p className="text-gray-600 text-lg">No jobs found. Try adjusting your filters.</p>
+                        <Briefcase size={48} className="mx-auto text-gray-600 mb-4" />
+                        <p className="text-gray-400 text-lg">No jobs found. Try adjusting your filters.</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
@@ -163,16 +163,16 @@ const Jobs = () => {
                             <Link
                                 key={job._id}
                                 to={`/jobs/${job._id}`}
-                                className="card block hover:shadow-lg transition-shadow"
+                                className="card block hover:border-primary-500/50 transition-all group"
                             >
                                 <div className="flex justify-between items-start">
                                     <div className="flex-1">
-                                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                        <h3 className="text-xl font-semibold text-gray-100 mb-2 group-hover:text-primary-400 transition-colors">
                                             {job.title}
                                         </h3>
-                                        <p className="text-primary-600 font-medium mb-3">{job.company}</p>
+                                        <p className="text-primary-500 font-medium mb-3">{job.company}</p>
 
-                                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                                        <div className="flex flex-wrap gap-4 text-sm text-gray-400">
                                             <div className="flex items-center gap-1">
                                                 <MapPin size={16} />
                                                 <span>{job.location}</span>
@@ -186,7 +186,7 @@ const Jobs = () => {
                                                 <span>{job.workMode}</span>
                                             </div>
                                             {job.salary?.max > 0 && (
-                                                <div className="flex items-center gap-1">
+                                                <div className="flex items-center gap-1 text-gray-300">
                                                     <DollarSign size={16} />
                                                     <span>
                                                         {job.salary.currency} {job.salary.min.toLocaleString()} -{" "}
@@ -201,7 +201,7 @@ const Jobs = () => {
                                                 {job.skills.slice(0, 5).map((skill, index) => (
                                                     <span
                                                         key={index}
-                                                        className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-xs font-medium"
+                                                        className="px-3 py-1 bg-primary-900/30 text-primary-300 border border-primary-500/20 rounded-full text-xs font-medium"
                                                     >
                                                         {skill}
                                                     </span>

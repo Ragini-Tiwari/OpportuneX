@@ -80,11 +80,11 @@ const JobDetails = () => {
     if (!job) return null;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen relative z-10 py-8">
             <div className="container mx-auto px-4 max-w-4xl">
                 <Link
                     to="/jobs"
-                    className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 mb-6"
+                    className="inline-flex items-center gap-2 text-primary-500 hover:text-primary-400 mb-6 transition-colors"
                 >
                     <ArrowLeft size={20} />
                     Back to Jobs
@@ -92,11 +92,11 @@ const JobDetails = () => {
 
                 <div className="card">
                     {/* Header */}
-                    <div className="border-b pb-6 mb-6">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
-                        <p className="text-xl text-primary-600 font-medium mb-4">{job.company}</p>
+                    <div className="border-b border-white/10 pb-6 mb-6">
+                        <h1 className="text-3xl font-bold text-gray-100 mb-2">{job.title}</h1>
+                        <p className="text-xl text-primary-500 font-medium mb-4">{job.company}</p>
 
-                        <div className="flex flex-wrap gap-4 text-gray-600">
+                        <div className="flex flex-wrap gap-4 text-gray-400">
                             <div className="flex items-center gap-1">
                                 <MapPin size={18} />
                                 <span>{job.location}</span>
@@ -110,7 +110,7 @@ const JobDetails = () => {
                                 <span>{job.workMode}</span>
                             </div>
                             {job.salary?.max > 0 && (
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1 text-gray-300">
                                     <DollarSign size={18} />
                                     <span>
                                         {job.salary.currency} {job.salary.min.toLocaleString()} -{" "}
@@ -125,7 +125,7 @@ const JobDetails = () => {
                         </div>
 
                         {job.applicationDeadline && (
-                            <div className="mt-4 flex items-center gap-2 text-orange-600">
+                            <div className="mt-4 flex items-center gap-2 text-orange-400">
                                 <Calendar size={18} />
                                 <span>
                                     Application Deadline:{" "}
@@ -138,12 +138,12 @@ const JobDetails = () => {
                     {/* Skills */}
                     {job.skills && job.skills.length > 0 && (
                         <div className="mb-6">
-                            <h2 className="text-lg font-semibold mb-3">Required Skills</h2>
+                            <h2 className="text-lg font-semibold mb-3 text-gray-100">Required Skills</h2>
                             <div className="flex flex-wrap gap-2">
                                 {job.skills.map((skill, index) => (
                                     <span
                                         key={index}
-                                        className="px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium"
+                                        className="px-4 py-2 bg-primary-900/30 text-primary-300 border border-primary-500/20 rounded-full text-sm font-medium"
                                     >
                                         {skill}
                                     </span>
@@ -154,19 +154,19 @@ const JobDetails = () => {
 
                     {/* Description */}
                     <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-3">Job Description</h2>
-                        <p className="text-gray-700 whitespace-pre-line">{job.description}</p>
+                        <h2 className="text-lg font-semibold mb-3 text-gray-100">Job Description</h2>
+                        <p className="text-gray-300 whitespace-pre-line">{job.description}</p>
                     </div>
 
                     {/* Requirements */}
                     <div className="mb-6">
-                        <h2 className="text-lg font-semibold mb-3">Requirements</h2>
-                        <p className="text-gray-700 whitespace-pre-line">{job.requirements}</p>
+                        <h2 className="text-lg font-semibold mb-3 text-gray-100">Requirements</h2>
+                        <p className="text-gray-300 whitespace-pre-line">{job.requirements}</p>
                     </div>
 
                     {/* Apply Button */}
                     {isAuthenticated && user?.role === "candidate" && (
-                        <div className="pt-6 border-t">
+                        <div className="pt-6 border-t border-white/10">
                             <button
                                 onClick={() => setShowApplyModal(true)}
                                 className="btn-primary w-full md:w-auto flex items-center justify-center gap-2"
@@ -178,7 +178,7 @@ const JobDetails = () => {
                     )}
 
                     {!isAuthenticated && (
-                        <div className="pt-6 border-t">
+                        <div className="pt-6 border-t border-white/10">
                             <Link to="/login" className="btn-primary w-full md:w-auto block text-center">
                                 Login to Apply
                             </Link>
@@ -189,13 +189,13 @@ const JobDetails = () => {
 
             {/* Apply Modal */}
             {showApplyModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-lg max-w-md w-full p-6">
-                        <h3 className="text-2xl font-bold mb-4">Apply for {job.title}</h3>
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-black-900 border border-white/10 rounded-lg max-w-md w-full p-6 shadow-2xl">
+                        <h3 className="text-2xl font-bold mb-4 text-gray-100">Apply for {job.title}</h3>
 
                         <form onSubmit={handleSubmit(handleApply)} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-300 mb-1">
                                     Resume URL *
                                 </label>
                                 <input
@@ -211,12 +211,12 @@ const JobDetails = () => {
                                     placeholder="https://example.com/your-resume.pdf"
                                 />
                                 {errors.resume && (
-                                    <p className="mt-1 text-sm text-red-600">{errors.resume.message}</p>
+                                    <p className="mt-1 text-sm text-red-500">{errors.resume.message}</p>
                                 )}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-300 mb-1">
                                     Cover Letter (Optional)
                                 </label>
                                 <textarea

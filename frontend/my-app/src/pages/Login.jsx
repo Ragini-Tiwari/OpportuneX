@@ -38,13 +38,13 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 py-12 px-4">
-            <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 relative z-10">
+            <div className="max-w-md w-full space-y-8 bg-black-900/50 backdrop-blur-md p-8 rounded-xl shadow-xl border border-white/10">
                 <div>
-                    <h2 className="text-center text-3xl font-bold text-gray-900">
+                    <h2 className="text-center text-3xl font-bold text-gray-100">
                         Welcome Back
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <p className="mt-2 text-center text-sm text-gray-400">
                         Sign in to your account
                     </p>
                 </div>
@@ -52,11 +52,11 @@ const Login = () => {
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-4">
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
                                 Email Address
                             </label>
                             <div className="relative">
-                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                                 <input
                                     id="email"
                                     type="email"
@@ -67,21 +67,21 @@ const Login = () => {
                                             message: "Invalid email address",
                                         },
                                     })}
-                                    className="input-field pl-10"
+                                    className="input-field pl-10 bg-black-950/50 border-gray-800 text-gray-100 focus:border-primary-500 placeholder-gray-600"
                                     placeholder="you@example.com"
                                 />
                             </div>
                             {errors.email && (
-                                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
                             )}
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
                                 Password
                             </label>
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                                 <input
                                     id="password"
                                     type="password"
@@ -92,12 +92,12 @@ const Login = () => {
                                             message: "Password must be at least 6 characters",
                                         },
                                     })}
-                                    className="input-field pl-10"
+                                    className="input-field pl-10 bg-black-950/50 border-gray-800 text-gray-100 focus:border-primary-500 placeholder-gray-600"
                                     placeholder="••••••••"
                                 />
                             </div>
                             {errors.password && (
-                                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
                             )}
                         </div>
                     </div>
@@ -105,15 +105,15 @@ const Login = () => {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/20"
                     >
                         {isLoading ? "Signing in..." : "Sign In"}
                         {!isLoading && <ArrowRight size={18} />}
                     </button>
 
                     <div className="text-center text-sm">
-                        <span className="text-gray-600">Don't have an account? </span>
-                        <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
+                        <span className="text-gray-400">Don't have an account? </span>
+                        <Link to="/register" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
                             Sign up
                         </Link>
                     </div>

@@ -12,10 +12,13 @@ import JobDetails from "./pages/JobDetails";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import PostJob from "./pages/PostJob";
 
+import BackgroundGrid from "./components/BackgroundGrid";
+
 function App() {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col relative">
+        <BackgroundGrid />
         <Navbar />
         <main className="flex-1">
           <Routes>
