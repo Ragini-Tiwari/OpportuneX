@@ -37,16 +37,16 @@ const Home = () => {
                             <p className="text-xl md:text-2xl mb-10 text-gray-400 max-w-2xl mx-auto">
                                 Connect with top employers and discover opportunities that match your skills on our secure, next-gen platform.
                             </p>
-                            <div className="flex gap-4 justify-center">
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link
                                     to="/jobs"
-                                    className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20"
+                                    className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20 text-center"
                                 >
                                     Browse Jobs
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="bg-black-900 text-primary-400 px-8 py-3 rounded-lg font-semibold hover:bg-black-800 transition-all border border-primary-900"
+                                    className="bg-black-900 text-primary-400 px-8 py-3 rounded-lg font-semibold hover:bg-black-800 transition-all border border-primary-900 text-center"
                                 >
                                     Get Started
                                 </Link>
@@ -68,7 +68,7 @@ const Home = () => {
                         </motion.h2>
 
                         <motion.div
-                            className="grid md:grid-cols-4 gap-8"
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
                             variants={staggerContainer}
                             initial="hidden"
                             whileInView="visible"

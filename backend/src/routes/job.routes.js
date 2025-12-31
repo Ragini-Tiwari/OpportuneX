@@ -7,6 +7,10 @@ import {
     deleteJob,
     getMyJobs,
 } from "../controllers/job.controller.js";
+import {
+    toggleSavedJob,
+    getSavedJobs,
+} from "../controllers/savedJob.controller.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
 const router = express.Router();
@@ -20,5 +24,9 @@ router.post("/", protect, authorize("recruiter", "admin"), createJob);
 router.put("/:id", protect, authorize("recruiter", "admin"), updateJob);
 router.delete("/:id", protect, authorize("recruiter", "admin"), deleteJob);
 router.get("/my/jobs", protect, authorize("recruiter", "admin"), getMyJobs);
+
+// Saved jobs routes
+router.get("/saved/all", protect, authorize("candidate"), getSavedJobs);
+router.post("/:id/save", protect, authorize("candidate"), toggleSavedJob);
 
 export default router;

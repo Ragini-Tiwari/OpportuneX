@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { jobService } from "../services/api.service";
+import useAuthStore from "../store/authStore";
+import JobCard from "../components/JobCard";
+import Filters from "../components/Filters";
 import toast from "react-hot-toast";
-import {
-    Search,
-    MapPin,
-    Briefcase,
-    DollarSign,
-    Clock,
-    Monitor,
-} from "lucide-react";
+import { Briefcase } from "lucide-react";
 
 const Jobs = () => {
+    const { isAuthenticated, user } = useAuthStore();
     const [jobs, setJobs] = useState([]);
+    const [savedJobsIds, setSavedJobsIds] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filters, setFilters] = useState({
         search: "",
@@ -24,7 +21,10 @@ const Jobs = () => {
 
     useEffect(() => {
         fetchJobs();
-    }, []);
+        if (isAuthenticated && user?.role === "candidate") {
+            fetchSavedJobsIds();
+        }
+    }, [isAuthenticated, user]);
 
     const fetchJobs = async (customFilters = {}) => {
         setLoading(true);
@@ -44,106 +44,31 @@ const Jobs = () => {
         }
     };
 
+    const fetchSavedJobsIds = async () => {
+        try {
+            const response = await jobService.getSavedJobs();
+            setSavedJobsIds(response.data.map(job => job._id));
+        } catch (error) {
+            console.error("Failed to fetch saved jobs ids", error);
+        }
+    };
+
     const handleSearch = (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         fetchJobs();
     };
 
     const handleFilterChange = (key, value) => {
-        const newFilters = { ...filters, [key]: value };
-        setFilters(newFilters);
+        setFilters(prev => ({ ...prev, [key]: value }));
     };
 
     return (
         <div className="min-h-screen relative z-10 pb-12">
-            {/* Search Section */}
-            <div className="bg-black-900/50 backdrop-blur-md border-b border-white/10 shadow-lg py-8">
-                <div className="container mx-auto px-4">
-                    <h1 className="text-3xl font-bold mb-6 text-gray-100">Find Your Next Opportunity</h1>
-
-                    <form onSubmit={handleSearch} className="space-y-4">
-                        <div className="grid md:grid-cols-4 gap-4">
-                            {/* Search Input */}
-                            <div className="relative md:col-span-2">
-                                <Search
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                    size={20}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Job title, keywords..."
-                                    value={filters.search}
-                                    onChange={(e) => handleFilterChange("search", e.target.value)}
-                                    className="input-field pl-10"
-                                />
-                            </div>
-
-                            {/* Location */}
-                            <div className="relative">
-                                <MapPin
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                    size={20}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Location"
-                                    value={filters.location}
-                                    onChange={(e) => handleFilterChange("location", e.target.value)}
-                                    className="input-field pl-10"
-                                />
-                            </div>
-
-                            {/* Search Button */}
-                            <button type="submit" className="btn-primary">
-                                Search Jobs
-                            </button>
-                        </div>
-
-                        {/* Filters */}
-                        <div className="grid md:grid-cols-3 gap-4">
-                            <select
-                                value={filters.category}
-                                onChange={(e) => handleFilterChange("category", e.target.value)}
-                                className="input-field text-gray-300 [&>option]:bg-black-900"
-                            >
-                                <option value="">All Categories</option>
-                                <option value="Engineering">Engineering</option>
-                                <option value="Design">Design</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Sales">Sales</option>
-                                <option value="Product">Product</option>
-                                <option value="Operations">Operations</option>
-                                <option value="HR">HR</option>
-                                <option value="Finance">Finance</option>
-                                <option value="Other">Other</option>
-                            </select>
-
-                            <select
-                                value={filters.jobType}
-                                onChange={(e) => handleFilterChange("jobType", e.target.value)}
-                                className="input-field text-gray-300 [&>option]:bg-black-900"
-                            >
-                                <option value="">All Job Types</option>
-                                <option value="Full-time">Full-time</option>
-                                <option value="Part-time">Part-time</option>
-                                <option value="Contract">Contract</option>
-                                <option value="Internship">Internship</option>
-                            </select>
-
-                            <select
-                                value={filters.workMode}
-                                onChange={(e) => handleFilterChange("workMode", e.target.value)}
-                                className="input-field text-gray-300 [&>option]:bg-black-900"
-                            >
-                                <option value="">All Work Modes</option>
-                                <option value="Remote">Remote</option>
-                                <option value="Onsite">Onsite</option>
-                                <option value="Hybrid">Hybrid</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <Filters
+                filters={filters}
+                onFilterChange={handleFilterChange}
+                onSearch={handleSearch}
+            />
 
             {/* Jobs List */}
             <div className="container mx-auto px-4 py-8">
@@ -160,64 +85,11 @@ const Jobs = () => {
                 ) : (
                     <div className="space-y-4">
                         {jobs.map((job) => (
-                            <Link
+                            <JobCard
                                 key={job._id}
-                                to={`/jobs/${job._id}`}
-                                className="card block hover:border-primary-500/50 transition-all group"
-                            >
-                                <div className="flex justify-between items-start">
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-semibold text-gray-100 mb-2 group-hover:text-primary-400 transition-colors">
-                                            {job.title}
-                                        </h3>
-                                        <p className="text-primary-500 font-medium mb-3">{job.company}</p>
-
-                                        <div className="flex flex-wrap gap-4 text-sm text-gray-400">
-                                            <div className="flex items-center gap-1">
-                                                <MapPin size={16} />
-                                                <span>{job.location}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Briefcase size={16} />
-                                                <span>{job.jobType}</span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Monitor size={16} />
-                                                <span>{job.workMode}</span>
-                                            </div>
-                                            {job.salary?.max > 0 && (
-                                                <div className="flex items-center gap-1 text-gray-300">
-                                                    <DollarSign size={16} />
-                                                    <span>
-                                                        {job.salary.currency} {job.salary.min.toLocaleString()} -{" "}
-                                                        {job.salary.max.toLocaleString()}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        {job.skills && job.skills.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-3">
-                                                {job.skills.slice(0, 5).map((skill, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="px-3 py-1 bg-primary-900/30 text-primary-300 border border-primary-500/20 rounded-full text-xs font-medium"
-                                                    >
-                                                        {skill}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="text-right ml-4">
-                                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                                            <Clock size={14} />
-                                            <span>{new Date(job.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                                job={job}
+                                isSavedInitial={savedJobsIds.includes(job._id)}
+                            />
                         ))}
                     </div>
                 )}

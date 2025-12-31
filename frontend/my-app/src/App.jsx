@@ -11,7 +11,10 @@ import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import PostJob from "./pages/PostJob";
+import SavedJobs from "./pages/SavedJobs";
+import AdminDashboard from "./pages/AdminDashboard";
 
+import Footer from "./components/Footer";
 import BackgroundGrid from "./components/BackgroundGrid";
 
 function App() {
@@ -45,14 +48,26 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/saved-jobs"
+              element={
+                <ProtectedRoute allowedRoles={["candidate"]}>
+                  <SavedJobs />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
 
-        <footer className="bg-gray-800 text-white py-6 mt-auto">
-          <div className="container mx-auto px-4 text-center">
-            <p>&copy; 2025 OpportuneX. All rights reserved.</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
 
       <Toaster

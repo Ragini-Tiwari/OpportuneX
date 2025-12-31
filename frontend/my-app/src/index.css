@@ -10,18 +10,18 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-primary-600 hover:bg-primary-500 text-white font-medium py-2 px-6 rounded-lg transition-all shadow-lg shadow-primary-500/10 active:scale-[0.98];
   }
 
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors;
+    @apply bg-white/5 hover:bg-white/10 text-gray-300 font-medium py-2 px-6 rounded-lg border border-white/10 transition-all active:scale-[0.98];
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all;
+    @apply w-full px-4 py-2.5 bg-black-950/50 border border-white/10 rounded-lg text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 outline-none transition-all;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-black-900/50 backdrop-blur-md border border-white/5 rounded-xl p-6 hover:border-white/10 transition-colors;
   }
 }

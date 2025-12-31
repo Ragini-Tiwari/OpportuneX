@@ -52,6 +52,38 @@ export const jobService = {
         const response = await api.get("/jobs/my/jobs");
         return response.data;
     },
+
+    getSavedJobs: async () => {
+        const response = await api.get("/jobs/saved/all");
+        return response.data;
+    },
+
+    toggleSaveJob: async (id) => {
+        const response = await api.post(`/jobs/${id}/save`);
+        return response.data;
+    },
+};
+
+export const adminService = {
+    getStats: async () => {
+        const response = await api.get("/admin/stats");
+        return response.data;
+    },
+
+    getUsers: async () => {
+        const response = await api.get("/admin/users");
+        return response.data;
+    },
+
+    deleteUser: async (id) => {
+        const response = await api.delete(`/admin/users/${id}`);
+        return response.data;
+    },
+
+    getJobs: async () => {
+        const response = await api.get("/admin/jobs");
+        return response.data;
+    },
 };
 
 export const applicationService = {

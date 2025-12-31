@@ -99,7 +99,7 @@ const jobSchema = new mongoose.Schema(
 );
 
 // Index for search optimization
-jobSchema.index({ title: "text", description: "text", company: "text" });
+jobSchema.index({ title: "text", description: "text", company: "text", skills: "text" });
 
 const Job = mongoose.model("Job", jobSchema);
 
