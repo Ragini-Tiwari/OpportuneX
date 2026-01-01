@@ -61,6 +61,41 @@ const userSchema = new mongoose.Schema(
                 ref: "Job",
             },
         ],
+        education: [
+            {
+                degree: String,
+                institution: String,
+                year: Number,
+                field: String,
+            },
+        ],
+        jobPreferences: {
+            roles: [String],
+            locations: [String],
+            salaryRange: {
+                min: Number,
+                max: Number,
+                currency: {
+                    type: String,
+                    default: "USD",
+                },
+            },
+            jobTypes: [String],
+            workModes: [String],
+        },
+        isBlocked: {
+            type: Boolean,
+            default: false,
+        },
+        blockedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        blockedAt: Date,
+        refreshToken: {
+            type: String,
+            select: false,
+        },
     },
     {
         timestamps: true,

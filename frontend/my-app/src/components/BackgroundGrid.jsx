@@ -16,8 +16,7 @@ const BackgroundGrid = () => {
                 }}
             />
 
-            {/* Radial Fade Mask */}
-            <div className="absolute inset-0 bg-black-950 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+            {/* Removed Radial Fade Mask to avoid blurry center */}
         </div>
     );
 };

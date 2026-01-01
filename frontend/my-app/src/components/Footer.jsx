@@ -114,45 +114,16 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Mission / Detailed Text Section */}
-                <div className="mb-16 p-8 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-sm relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 blur-[100px] pointer-events-none group-hover:bg-primary-500/10 transition-colors duration-700"></div>
-                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-2">
-                            <h3 className="text-gray-100 font-bold mb-4 text-xl flex items-center gap-2">
-                                <span className="w-8 h-[2px] bg-primary-500"></span>
-                                Our Commitment to Excellence
-                            </h3>
-                            <p className="text-gray-400 text-sm leading-relaxed mb-4">
-                                At OpportuneX, we believe that the right opportunity can change a life, and the right talent can change the world. Our platform is engineered to remove the noise from the recruitment process, focusing on meaningful connections, skill-based matching, and transparent communication. We are committed to building a diverse and inclusive global workforce where proximity is no longer a barrier to potential.
-                            </p>
-                            <p className="text-gray-400 text-sm leading-relaxed">
-                                Join over <span className="text-primary-400 font-semibold">50,000+ professionals</span> and <span className="text-primary-400 font-semibold">2,500+ companies</span> who trust OpportuneX to power their growth. Our advanced AI-driven matching engine ensures that you spend less time searching and more time building.
-                            </p>
-                        </div>
-                        <div className="flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-8">
-                            <h4 className="text-gray-100 font-semibold mb-4 text-sm uppercase tracking-widest opacity-60">Platform Stats</h4>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p className="text-2xl font-bold text-primary-500">92%</p>
-                                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Fill Rate</p>
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-primary-500">48h</p>
-                                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Avg. Response</p>
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-primary-500">150+</p>
-                                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Countries</p>
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-primary-500">24/7</p>
-                                    <p className="text-[10px] text-gray-500 uppercase tracking-wider">Global Support</p>
-                                </div>
-                            </div>
-                        </div>
+                {/* Streamlined Brand Text Section */}
+                <div className="mb-12 border-t border-white/5 pt-10">
+                    <div className="max-w-3xl">
+                        <h3 className="text-gray-100 font-bold mb-4 text-base opacity-90 uppercase tracking-widest">The OpportuneX Mission</h3>
+                        <p className="text-gray-400 text-sm leading-relaxed mb-4 italic">
+                            "Connecting high-caliber talent with visionary companies through an intelligent, borderless ecosystem. We are committed to building a transparent future of work where potential meets its perfect match, regardless of proximity."
+                        </p>
                     </div>
                 </div>
+
 
                 {/* Newsletter / Bottom Bar */}
                 <div className="pt-10 border-t border-white/5">
