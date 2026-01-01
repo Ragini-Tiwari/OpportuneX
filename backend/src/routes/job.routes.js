@@ -6,6 +6,7 @@ import {
     updateJob,
     deleteJob,
     getMyJobs,
+    getTodaysJobs,
 } from "../controllers/job.controller.js";
 import {
     toggleSavedJob,
@@ -17,6 +18,7 @@ const router = express.Router();
 
 // Public routes
 router.get("/", getAllJobs);
+router.get("/today", getTodaysJobs);
 router.get("/:id", getJob);
 
 // Protected routes
@@ -28,5 +30,6 @@ router.get("/my/jobs", protect, authorize("recruiter", "admin"), getMyJobs);
 // Saved jobs routes
 router.get("/saved/all", protect, authorize("candidate"), getSavedJobs);
 router.post("/:id/save", protect, authorize("candidate"), toggleSavedJob);
+
 
 export default router;

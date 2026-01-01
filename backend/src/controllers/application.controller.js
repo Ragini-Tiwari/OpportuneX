@@ -1,37 +1,19 @@
 import Application from "../models/Application.js";
 import Job from "../models/Job.js";
-import Joi from "joi";
-
-// Validation schema
-const applicationSchema = Joi.object({
-    job: Joi.string().required(),
-    resume: Joi.string().required().uri(),
-    coverLetter: Joi.string().optional(),
-});
+import * as atsService from "../services/ats.service.js";
+import { NotFoundError, AuthorizationError, ValidationError } from "../utils/errorHandler.js";
 
 // @desc    Create application
 // @route   POST /api/applications
 // @access  Private (Candidate)
 export const createApplication = async (req, res) => {
     try {
-        // Validate request body
-        const { error, value } = applicationSchema.validate(req.body);
-        if (error) {
-            return res.status(400).json({
-                success: false,
-                message: error.details[0].message,
-            });
-        }
-
-        const { job, resume, coverLetter } = value;
+        const { job, resume, coverLetter } = req.body;
 
         // Check if job exists
         const jobExists = await Job.findById(job);
         if (!jobExists) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found",
-            });
+            throw new NotFoundError("Job");
         }
 
         // Check if already applied
@@ -53,6 +35,7 @@ export const createApplication = async (req, res) => {
             applicant: req.user.id,
             resume,
             coverLetter,
+            status: 'applied',
         });
 
         // Increment applications count
@@ -66,6 +49,9 @@ export const createApplication = async (req, res) => {
             data: application,
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
         console.error("Create application error:", error);
         res.status(500).json({
             success: false,
@@ -81,32 +67,34 @@ export const getJobApplications = async (req, res) => {
     try {
         const { jobId } = req.params;
 
-        // Check if job exists and user owns it
         const job = await Job.findById(jobId);
         if (!job) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found",
-            });
+            throw new NotFoundError("Job");
         }
 
         if (job.postedBy.toString() !== req.user.id && req.user.role !== "admin") {
-            return res.status(403).json({
-                success: false,
-                message: "Not authorized to view applications for this job",
-            });
+            throw new AuthorizationError();
         }
 
         const applications = await Application.find({ job: jobId })
             .populate("applicant", "name email phone skills experience")
             .sort({ createdAt: -1 });
 
+        const stats = await atsService.getApplicationStats(jobId);
+
         res.status(200).json({
             success: true,
             data: applications,
+            stats,
             count: applications.length,
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        if (error instanceof AuthorizationError) {
+            return res.status(403).json({ success: false, message: error.message });
+        }
         console.error("Get job applications error:", error);
         res.status(500).json({
             success: false,
@@ -139,62 +127,116 @@ export const getMyApplications = async (req, res) => {
 };
 
 // @desc    Update application status
-// @route   PUT /api/applications/:id/status
+// @route   PATCH /api/applications/:id/status
 // @access  Private (Recruiter/Admin)
 export const updateApplicationStatus = async (req, res) => {
     try {
-        const { status, notes } = req.body;
+        const { status, notes, interviewDate, offerDetails, rejectionReason } = req.body;
 
-        // Validate status
-        const validStatuses = [
-            "pending",
-            "reviewing",
-            "shortlisted",
-            "rejected",
-            "accepted",
-        ];
-        if (!validStatuses.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid status",
-            });
-        }
-
-        const application = await Application.findById(req.params.id).populate(
-            "job"
-        );
-
+        const application = await Application.findById(req.params.id).populate("job");
         if (!application) {
-            return res.status(404).json({
-                success: false,
-                message: "Application not found",
-            });
+            throw new NotFoundError("Application");
         }
 
-        // Check if user owns the job
-        if (
-            application.job.postedBy.toString() !== req.user.id &&
-            req.user.role !== "admin"
-        ) {
-            return res.status(403).json({
-                success: false,
-                message: "Not authorized to update this application",
-            });
+        if (application.job.postedBy.toString() !== req.user.id && req.user.role !== "admin") {
+            throw new AuthorizationError();
         }
 
-        application.status = status;
-        if (notes) {
-            application.notes = notes;
-        }
-        await application.save();
+        const updatedApplication = await atsService.updateStatus(
+            req.params.id,
+            status,
+            req.user.id,
+            notes,
+            { interviewDate, offerDetails, rejectionReason }
+        );
 
         res.status(200).json({
             success: true,
             message: "Application status updated successfully",
-            data: application,
+            data: updatedApplication,
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        if (error instanceof AuthorizationError) {
+            return res.status(403).json({ success: false, message: error.message });
+        }
         console.error("Update application status error:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message || "Server error",
+        });
+    }
+};
+
+// @desc    Bulk update application status
+// @route   PATCH /api/applications/bulk-status
+// @access  Private (Recruiter/Admin)
+export const bulkUpdateStatus = async (req, res) => {
+    try {
+        const { applicationIds, status, notes } = req.body;
+
+        if (!applicationIds || !Array.isArray(applicationIds)) {
+            throw new ValidationError("applicationIds must be an array");
+        }
+
+        const results = await atsService.bulkUpdateStatus(
+            applicationIds,
+            status,
+            req.user.id,
+            notes
+        );
+
+        res.status(200).json({
+            success: true,
+            data: results,
+        });
+    } catch (error) {
+        console.error("Bulk update items error:", error);
+        res.status(500).json({
+            success: false,
+            message: error.message || "Server error",
+        });
+    }
+};
+
+// @desc    Get application timeline
+// @route   GET /api/applications/:id/timeline
+// @access  Private (Recruiter/Admin/Applicant)
+export const getApplicationTimeline = async (req, res) => {
+    try {
+        const application = await Application.findById(req.params.id);
+        if (!application) {
+            throw new NotFoundError("Application");
+        }
+
+        // Check authorization
+        if (
+            application.applicant.toString() !== req.user.id &&
+            req.user.role !== "admin"
+        ) {
+            // If recruiter, check if they own the job
+            const job = await Job.findById(application.job);
+            if (job.postedBy.toString() !== req.user.id) {
+                throw new AuthorizationError();
+            }
+        }
+
+        const timeline = await atsService.getApplicationTimeline(req.params.id);
+
+        res.status(200).json({
+            success: true,
+            data: timeline,
+        });
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        if (error instanceof AuthorizationError) {
+            return res.status(403).json({ success: false, message: error.message });
+        }
+        console.error("Get timeline error:", error);
         res.status(500).json({
             success: false,
             message: "Server error",
@@ -202,7 +244,7 @@ export const updateApplicationStatus = async (req, res) => {
     }
 };
 
-// @desc    Delete application
+// @desc    Delete/Withdraw application
 // @route   DELETE /api/applications/:id
 // @access  Private (Candidate - own application)
 export const deleteApplication = async (req, res) => {
@@ -210,18 +252,11 @@ export const deleteApplication = async (req, res) => {
         const application = await Application.findById(req.params.id);
 
         if (!application) {
-            return res.status(404).json({
-                success: false,
-                message: "Application not found",
-            });
+            throw new NotFoundError("Application");
         }
 
-        // Check ownership
         if (application.applicant.toString() !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: "Not authorized to delete this application",
-            });
+            throw new AuthorizationError("Not authorized to withdraw this application");
         }
 
         await application.deleteOne();
@@ -233,9 +268,15 @@ export const deleteApplication = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "Application deleted successfully",
+            message: "Application withdrawn successfully",
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
+        if (error instanceof AuthorizationError) {
+            return res.status(403).json({ success: false, message: error.message });
+        }
         console.error("Delete application error:", error);
         res.status(500).json({
             success: false,
@@ -243,3 +284,4 @@ export const deleteApplication = async (req, res) => {
         });
     }
 };
+

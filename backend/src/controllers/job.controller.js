@@ -1,107 +1,49 @@
 import Job from "../models/Job.js";
-import Joi from "joi";
-
-// Validation schema
-const jobSchema = Joi.object({
-    title: Joi.string().required().trim(),
-    company: Joi.string().required().trim(),
-    description: Joi.string().required(),
-    requirements: Joi.string().required(),
-    location: Joi.string().required().trim(),
-    jobType: Joi.string()
-        .valid("Full-time", "Part-time", "Contract", "Internship")
-        .default("Full-time"),
-    workMode: Joi.string().valid("Remote", "Onsite", "Hybrid").default("Onsite"),
-    salary: Joi.object({
-        min: Joi.number().min(0).default(0),
-        max: Joi.number().min(0).default(0),
-        currency: Joi.string().default("USD"),
-    }).optional(),
-    skills: Joi.array().items(Joi.string()).optional(),
-    experience: Joi.object({
-        min: Joi.number().min(0).default(0),
-        max: Joi.number().min(0).default(0),
-    }).optional(),
-    category: Joi.string()
-        .valid(
-            "Engineering",
-            "Design",
-            "Marketing",
-            "Sales",
-            "Product",
-            "Operations",
-            "HR",
-            "Finance",
-            "Other"
-        )
-        .default("Other"),
-    applicationDeadline: Joi.date().optional(),
-    status: Joi.string().valid("active", "closed", "draft").default("active"),
-});
+import Company from "../models/Company.js";
+import {
+    buildJobFilters,
+    buildPagination,
+    buildSort
+} from "../utils/queryBuilder.js";
+import { NotFoundError } from "../utils/errorHandler.js";
 
 // @desc    Get all jobs
 // @route   GET /api/jobs
 // @access  Public
 export const getAllJobs = async (req, res) => {
     try {
-        const {
-            page = 1,
-            limit = 10,
-            search,
-            category,
-            jobType,
-            workMode,
-            location,
-            status = "active",
-        } = req.query;
+        // Build filters using utility
+        const filters = buildJobFilters(req.query);
 
-        // Build query
-        const query = { status };
+        // Build pagination and sorting
+        const { page, limit, skip } = buildPagination(req.query);
+        const sort = buildSort(req.query);
 
-        if (search) {
-            query.$text = { $search: search };
-        }
+        // Execute query
+        const jobs = await Job.find(filters)
+            .populate("company", "name logo location")
+            .populate("postedBy", "name email")
+            .limit(limit)
+            .skip(skip)
+            .sort(sort);
 
-        if (category) {
-            query.category = category;
-        }
-
-        if (jobType) {
-            query.jobType = jobType;
-        }
-
-        if (workMode) {
-            query.workMode = workMode;
-        }
-
-        if (location) {
-            query.location = { $regex: location, $options: "i" };
-        }
-
-        // Execute query with pagination
-        const jobs = await Job.find(query)
-            .populate("postedBy", "name email company")
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
-            .sort({ createdAt: -1 });
-
-        const count = await Job.countDocuments(query);
+        const total = await Job.countDocuments(filters);
 
         res.status(200).json({
             success: true,
             data: jobs,
             pagination: {
-                page: parseInt(page),
-                limit: parseInt(limit),
-                total: count,
-                pages: Math.ceil(count / limit),
+                page,
+                limit,
+                total,
+                pages: Math.ceil(total / limit),
             },
         });
     } catch (error) {
         console.error("Get all jobs error:", error);
         res.status(500).json({
             success: false,
-            message: "Server error",
+            message: "Server error: " + error.message,
         });
     }
 };
@@ -111,16 +53,12 @@ export const getAllJobs = async (req, res) => {
 // @access  Public
 export const getJob = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.id).populate(
-            "postedBy",
-            "name email company"
-        );
+        const job = await Job.findById(req.params.id)
+            .populate("company", "name logo location description industry size website")
+            .populate("postedBy", "name email");
 
         if (!job) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found",
-            });
+            throw new NotFoundError("Job");
         }
 
         res.status(200).json({
@@ -128,6 +66,9 @@ export const getJob = async (req, res) => {
             data: job,
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
         console.error("Get job error:", error);
         res.status(500).json({
             success: false,
@@ -141,31 +82,23 @@ export const getJob = async (req, res) => {
 // @access  Private (Recruiter/Admin)
 export const createJob = async (req, res) => {
     try {
-        // Validate request body
-        const { error, value } = jobSchema.validate(req.body);
-        if (error) {
-            return res.status(400).json({
-                success: false,
-                message: error.details[0].message,
-            });
-        }
-
         // Create job with postedBy field
+        // Note: status will default to pending_approval as per model
         const job = await Job.create({
-            ...value,
+            ...req.body,
             postedBy: req.user.id,
         });
 
         res.status(201).json({
             success: true,
-            message: "Job created successfully",
+            message: "Job created successfully and pending approval",
             data: job,
         });
     } catch (error) {
         console.error("Create job error:", error);
         res.status(500).json({
             success: false,
-            message: "Server error",
+            message: error.message || "Server error",
         });
     }
 };
@@ -178,10 +111,7 @@ export const updateJob = async (req, res) => {
         let job = await Job.findById(req.params.id);
 
         if (!job) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found",
-            });
+            throw new NotFoundError("Job");
         }
 
         // Check ownership (only job poster or admin can update)
@@ -192,16 +122,15 @@ export const updateJob = async (req, res) => {
             });
         }
 
-        // Validate request body
-        const { error, value } = jobSchema.validate(req.body);
-        if (error) {
+        // If status is being updated to active, ensure it's approved
+        if (req.body.status === 'active' && !job.isApproved && req.user.role !== 'admin') {
             return res.status(400).json({
                 success: false,
-                message: error.details[0].message,
+                message: "Cannot activate job before admin approval",
             });
         }
 
-        job = await Job.findByIdAndUpdate(req.params.id, value, {
+        job = await Job.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true,
         });
@@ -212,6 +141,9 @@ export const updateJob = async (req, res) => {
             data: job,
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
         console.error("Update job error:", error);
         res.status(500).json({
             success: false,
@@ -228,10 +160,7 @@ export const deleteJob = async (req, res) => {
         const job = await Job.findById(req.params.id);
 
         if (!job) {
-            return res.status(404).json({
-                success: false,
-                message: "Job not found",
-            });
+            throw new NotFoundError("Job");
         }
 
         // Check ownership
@@ -249,6 +178,9 @@ export const deleteJob = async (req, res) => {
             message: "Job deleted successfully",
         });
     } catch (error) {
+        if (error instanceof NotFoundError) {
+            return res.status(404).json({ success: false, message: error.message });
+        }
         console.error("Delete job error:", error);
         res.status(500).json({
             success: false,
@@ -262,9 +194,9 @@ export const deleteJob = async (req, res) => {
 // @access  Private (Recruiter/Admin)
 export const getMyJobs = async (req, res) => {
     try {
-        const jobs = await Job.find({ postedBy: req.user.id }).sort({
-            createdAt: -1,
-        });
+        const jobs = await Job.find({ postedBy: req.user.id })
+            .populate("company", "name logo")
+            .sort({ createdAt: -1 });
 
         res.status(200).json({
             success: true,
@@ -273,6 +205,36 @@ export const getMyJobs = async (req, res) => {
         });
     } catch (error) {
         console.error("Get my jobs error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+        });
+    }
+};
+
+// @desc    Get today's jobs
+// @route   GET /api/jobs/today
+// @access  Public
+export const getTodaysJobs = async (req, res) => {
+    try {
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const jobs = await Job.find({
+            status: "active",
+            isApproved: true,
+            createdAt: { $gte: startOfDay },
+        })
+            .populate("company", "name logo location")
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            data: jobs,
+            count: jobs.length,
+        });
+    } catch (error) {
+        console.error("Get today's jobs error:", error);
         res.status(500).json({
             success: false,
             message: "Server error",

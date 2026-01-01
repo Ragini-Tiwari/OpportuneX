@@ -5,28 +5,22 @@ import {
     getMyApplications,
     updateApplicationStatus,
     deleteApplication,
+    bulkUpdateStatus,
+    getApplicationTimeline,
 } from "../controllers/application.controller.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// Candidate routes
-router.post("/", protect, authorize("candidate"), createApplication);
-router.get("/my", protect, authorize("candidate"), getMyApplications);
-router.delete("/:id", protect, authorize("candidate"), deleteApplication);
+// Protected routes
+router.use(protect);
 
-// Recruiter/Admin routes
-router.get(
-    "/job/:jobId",
-    protect,
-    authorize("recruiter", "admin"),
-    getJobApplications
-);
-router.put(
-    "/:id/status",
-    protect,
-    authorize("recruiter", "admin"),
-    updateApplicationStatus
-);
+router.post("/", authorize("candidate"), createApplication);
+router.get("/my", authorize("candidate"), getMyApplications);
+router.get("/job/:jobId", authorize("recruiter", "admin"), getJobApplications);
+router.patch("/:id/status", authorize("recruiter", "admin"), updateApplicationStatus);
+router.patch("/bulk-status", authorize("recruiter", "admin"), bulkUpdateStatus);
+router.get("/:id/timeline", getApplicationTimeline);
+router.delete("/:id", authorize("candidate"), deleteApplication);
 
 export default router;

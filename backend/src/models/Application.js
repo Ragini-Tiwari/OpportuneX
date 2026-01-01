@@ -21,9 +21,37 @@ const applicationSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["pending", "reviewing", "shortlisted", "rejected", "accepted"],
-            default: "pending",
+            enum: ["applied", "shortlisted", "interview", "offer", "rejected"],
+            default: "applied",
         },
+        statusHistory: [
+            {
+                status: {
+                    type: String,
+                    enum: ["applied", "shortlisted", "interview", "offer", "rejected"],
+                },
+                changedBy: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User",
+                },
+                changedAt: {
+                    type: Date,
+                    default: Date.now,
+                },
+                notes: String,
+            },
+        ],
+        appliedAt: {
+            type: Date,
+            default: Date.now,
+        },
+        interviewDate: Date,
+        offerDetails: {
+            salary: Number,
+            joiningDate: Date,
+            otherDetails: String,
+        },
+        rejectionReason: String,
         notes: {
             type: String, // Recruiter's notes
         },
@@ -32,6 +60,18 @@ const applicationSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+// Pre-save hook to track status changes
+applicationSchema.pre('save', function (next) {
+    if (this.isModified('status') && !this.isNew) {
+        this.statusHistory.push({
+            status: this.status,
+            changedAt: new Date(),
+            // changedBy will be set by the controller
+        });
+    }
+    next();
+});
 
 // Compound index to prevent duplicate applications
 applicationSchema.index({ job: 1, applicant: 1 }, { unique: true });

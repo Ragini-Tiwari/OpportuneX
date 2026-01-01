@@ -1,8 +1,9 @@
 import User from "../models/User.js";
+import { NotFoundError } from "../utils/errorHandler.js";
 
 // @desc    Toggle save job
 // @route   POST /api/jobs/:id/save
-// @access  Private
+// @access  Private (Candidate)
 export const toggleSavedJob = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -37,16 +38,22 @@ export const toggleSavedJob = async (req, res) => {
 };
 
 // @desc    Get user's saved jobs
-// @route   GET /api/jobs/saved
-// @access  Private
+// @route   GET /api/jobs/saved/all
+// @access  Private (Candidate)
 export const getSavedJobs = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate({
             path: "savedJobs",
-            populate: {
-                path: "postedBy",
-                select: "name email company",
-            },
+            populate: [
+                {
+                    path: "company",
+                    select: "name logo location"
+                },
+                {
+                    path: "postedBy",
+                    select: "name email",
+                }
+            ],
         });
 
         res.status(200).json({
@@ -62,3 +69,4 @@ export const getSavedJobs = async (req, res) => {
         });
     }
 };
+

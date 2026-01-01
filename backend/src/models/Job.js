@@ -8,9 +8,14 @@ const jobSchema = new mongoose.Schema(
             trim: true,
         },
         company: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Company",
+            required: [true, "Company is required"],
+        },
+        companyName: {
             type: String,
-            required: [true, "Company name is required"],
             trim: true,
+            // Fallback for display if Company ref is not populated
         },
         description: {
             type: String,
@@ -82,8 +87,8 @@ const jobSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["active", "closed", "draft"],
-            default: "active",
+            enum: ["active", "closed", "draft", "pending_approval"],
+            default: "pending_approval",
         },
         applicationDeadline: {
             type: Date,
@@ -92,6 +97,29 @@ const jobSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
+        isExternal: {
+            type: Boolean,
+            default: false,
+        },
+        externalUrl: {
+            type: String,
+            // URL for external job applications
+        },
+        source: {
+            type: String,
+            enum: ["internal", "greenhouse", "lever"],
+            default: "internal",
+        },
+        benefits: [String],
+        isApproved: {
+            type: Boolean,
+            default: false,
+        },
+        approvedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+        },
+        approvedAt: Date,
     },
     {
         timestamps: true,
@@ -99,8 +127,14 @@ const jobSchema = new mongoose.Schema(
 );
 
 // Index for search optimization
-jobSchema.index({ title: "text", description: "text", company: "text", skills: "text" });
+jobSchema.index({ title: "text", description: "text", companyName: "text", skills: "text" });
+
+// Additional indexes for filtering
+jobSchema.index({ isExternal: 1, source: 1 });
+jobSchema.index({ isApproved: 1, status: 1 });
+jobSchema.index({ company: 1 });
 
 const Job = mongoose.model("Job", jobSchema);
 
 export default Job;
+

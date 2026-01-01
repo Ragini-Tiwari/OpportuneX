@@ -5,14 +5,22 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
+import { errorHandler } from "./utils/errorHandler.js";
 
 // Import routes
 import authRoutes from "./routes/auth.routes.js";
 import jobRoutes from "./routes/job.routes.js";
 import applicationRoutes from "./routes/application.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import externalJobRoutes from "./routes/externalJob.routes.js";
+import companyRoutes from "./routes/company.routes.js";
+import { initCronJobs } from "./config/cronJobs.js";
 
 dotenv.config();
+
+// Initialize cron jobs
+initCronJobs();
+
 
 // Connect to database
 connectDB();
@@ -45,6 +53,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/external-jobs", externalJobRoutes);
+app.use("/api/companies", companyRoutes);
 
 // Health check
 app.get("/", (req, res) => {
@@ -64,13 +74,7 @@ app.use((req, res) => {
 });
 
 // Global error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || "Internal server error",
-  });
-});
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
