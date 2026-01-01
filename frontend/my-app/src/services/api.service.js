@@ -104,6 +104,11 @@ export const adminService = {
         const response = await api.get("/admin/logs");
         return response.data;
     },
+
+    triggerSync: async () => {
+        const response = await api.post("/admin/sync/trigger");
+        return response.data;
+    },
 };
 
 export const applicationService = {

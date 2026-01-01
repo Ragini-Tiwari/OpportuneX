@@ -30,7 +30,13 @@ const Register = () => {
             const response = await authService.register(data);
             loginStore(response.data.user, response.data.token);
             toast.success("Registration successful!");
-            navigate(data.role === "recruiter" ? "/dashboard" : "/jobs");
+
+            // Fix redirection based on role
+            if (data.role === "recruiter") {
+                navigate("/dashboard");
+            } else {
+                navigate("/jobs");
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || "Registration failed");
         } finally {

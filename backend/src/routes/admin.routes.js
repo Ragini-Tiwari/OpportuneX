@@ -7,6 +7,7 @@ import {
     approveJob,
     toggleUserBlock,
     getAdminLogs,
+    triggerSync,
 } from "../controllers/admin.controller.js";
 import { protect, authorize } from "../middlewares/auth.js";
 
@@ -23,5 +24,6 @@ router.delete("/users/:id", deleteUser);
 router.get("/jobs", getAllJobsAdmin);
 router.patch("/jobs/:id/approve", approveJob);
 router.get("/logs", getAdminLogs);
+router.post("/sync/trigger", triggerSync);
 
 export default router;

@@ -6,9 +6,9 @@ export const registerSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
     role: Joi.string().valid(...Object.values(ROLES)).default(ROLES.CANDIDATE),
-    phone: Joi.string().optional(),
-    company: Joi.string().optional(),
-    location: Joi.string().optional(),
+    phone: Joi.string().allow('', null).optional(),
+    company: Joi.string().allow('', null).optional(),
+    location: Joi.string().allow('', null).optional(),
 });
 
 export const loginSchema = Joi.object({

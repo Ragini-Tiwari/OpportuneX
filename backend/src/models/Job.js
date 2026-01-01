@@ -82,6 +82,9 @@ const jobSchema = new mongoose.Schema(
                 message: "External URL is required for external jobs",
             },
         },
+        externalId: {
+            type: String, // ID from the original source
+        },
         source: {
             type: String,
             enum: ["internal", "greenhouse", "lever"],

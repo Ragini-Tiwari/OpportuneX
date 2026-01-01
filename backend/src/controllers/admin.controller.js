@@ -95,6 +95,19 @@ export const approveJob = async (req, res, next) => {
     }
 };
 
+export const triggerSync = async (req, res, next) => {
+    try {
+        const results = await adminService.triggerManualSync();
+        res.status(200).json({
+            success: true,
+            message: "Manual sync triggered successfully",
+            data: results,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Get admin logs
 // @route   GET /api/admin/logs
 // @access  Private (Admin)

@@ -25,7 +25,9 @@ const Login = () => {
             toast.success("Login successful!");
 
             // Redirect based on role
-            if (response.data.user.role === "recruiter" || response.data.user.role === "admin") {
+            if (response.data.user.role === "admin") {
+                navigate("/admin/dashboard");
+            } else if (response.data.user.role === "recruiter") {
                 navigate("/dashboard");
             } else {
                 navigate("/jobs");

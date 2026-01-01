@@ -71,6 +71,17 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleTriggerSync = async () => {
+        const toastId = toast.loading("Syncing jobs from external sources...");
+        try {
+            const response = await adminService.triggerSync();
+            toast.success("Synchronization completed!", { id: toastId });
+            fetchData();
+        } catch (error) {
+            toast.error("Sync failed: " + (error.response?.data?.message || error.message), { id: toastId });
+        }
+    };
+
     const StatsCard = ({ title, value, icon: Icon, color }) => (
         <div className="card-glass p-6">
             <div className="flex items-center justify-between">
@@ -86,26 +97,35 @@ const AdminDashboard = () => {
     );
 
     return (
-        <div className="min-h-screen relative z-10 py-8">
-            <div className="container mx-auto px-4">
+        <div className="min-h-screen relative z-10 py-4 md:py-8">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div>
                         <h1 className="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
                         <p className="text-gray-400">Platform oversight and management</p>
                     </div>
-                    <div className="flex bg-black-900/50 backdrop-blur-md p-1 rounded-xl border border-white/10">
-                        {["overview", "users", "jobs", "logs"].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === tab
+                    <div className="flex flex-wrap gap-4 items-center">
+                        <button
+                            onClick={handleTriggerSync}
+                            className="btn-secondary flex items-center gap-2 border-primary-500/20 text-primary-500 hover:bg-primary-500/10"
+                        >
+                            <Activity size={18} />
+                            Trigger Sync
+                        </button>
+                        <div className="flex bg-black-900/50 backdrop-blur-md p-1 rounded-xl border border-white/10">
+                            {["overview", "users", "jobs", "logs"].map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === tab
                                         ? "bg-primary-500 text-black shadow-lg shadow-primary-500/20"
                                         : "text-gray-400 hover:text-white"
-                                    }`}
-                            >
-                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                            </button>
-                        ))}
+                                        }`}
+                                >
+                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -137,7 +157,7 @@ const AdminDashboard = () => {
                                                         <p className="text-gray-500 text-xs">{u.email}</p>
                                                     </div>
                                                     <span className={`px-2 py-1 rounded text-[10px] uppercase font-bold ${u.role === 'admin' ? 'bg-purple-500/20 text-purple-500' :
-                                                            u.role === 'recruiter' ? 'bg-blue-500/20 text-blue-500' : 'bg-green-500/20 text-green-500'
+                                                        u.role === 'recruiter' ? 'bg-blue-500/20 text-blue-500' : 'bg-green-500/20 text-green-500'
                                                         }`}>
                                                         {u.role}
                                                     </span>
@@ -232,7 +252,7 @@ const AdminDashboard = () => {
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
-                                            {j.status === 'pending_approval' && (
+                                            {(j.status === 'pending_approval' || j.status === 'pending') && (
                                                 <>
                                                     <button
                                                         onClick={() => handleApproveJob(j._id, 'active')}

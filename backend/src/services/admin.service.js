@@ -4,6 +4,7 @@ import Application from "../models/Application.js";
 import AdminLog from "../models/AdminLog.js";
 import { NotFoundError } from "../utils/errorHandler.js";
 import { JOB_STATUS } from "../constants/index.js";
+import { syncJobs } from "./aggregator.service.js";
 
 export const getStats = async () => {
     const today = new Date();
@@ -148,4 +149,9 @@ export const getLogs = async () => {
         .sort({ createdAt: -1 })
         .populate("admin", "name email")
         .limit(100);
+};
+
+export const triggerManualSync = async () => {
+    const results = await syncJobs();
+    return results;
 };

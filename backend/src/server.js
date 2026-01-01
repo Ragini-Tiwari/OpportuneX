@@ -18,10 +18,6 @@ import { initCronJobs } from "./config/cronJobs.js";
 
 dotenv.config();
 
-// Initialize cron jobs
-initCronJobs();
-
-
 // Connect to database
 connectDB();
 
@@ -47,6 +43,9 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Initialize Cron Jobs
+initCronJobs();
 
 // API routes
 app.use("/api/auth", authRoutes);
