@@ -12,6 +12,7 @@ const adminLogSchema = new mongoose.Schema(
             enum: [
                 'user_blocked',
                 'user_unblocked',
+                'user_deleted',
                 'job_approved',
                 'job_rejected',
                 'source_enabled',

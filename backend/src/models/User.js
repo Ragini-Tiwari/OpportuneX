@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import { ROLES } from "../constants/index.js";
 
 const userSchema = new mongoose.Schema(
     {
@@ -24,8 +25,8 @@ const userSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            enum: ["candidate", "recruiter", "admin"],
-            default: "candidate",
+            enum: Object.values(ROLES),
+            default: ROLES.CANDIDATE,
         },
         phone: {
             type: String,

@@ -56,7 +56,7 @@ const JobDetails = () => {
         setApplying(true);
         try {
             await applicationService.createApplication({
-                job: id,
+                jobId: id,
                 resume: data.resume,
                 coverLetter: data.coverLetter,
             });
@@ -94,7 +94,7 @@ const JobDetails = () => {
                     {/* Header */}
                     <div className="border-b border-white/10 pb-6 mb-6">
                         <h1 className="text-3xl font-bold text-gray-100 mb-2">{job.title}</h1>
-                        <p className="text-xl text-primary-500 font-medium mb-4">{job.company}</p>
+                        <p className="text-xl text-primary-500 font-medium mb-4">{job.companyName}</p>
 
                         <div className="flex flex-wrap gap-4 text-gray-400">
                             <div className="flex items-center gap-1">

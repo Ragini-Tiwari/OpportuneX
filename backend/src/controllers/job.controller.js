@@ -1,93 +1,44 @@
-import Job from "../models/Job.js";
-import Company from "../models/Company.js";
-import {
-    buildJobFilters,
-    buildPagination,
-    buildSort
-} from "../utils/queryBuilder.js";
-import { NotFoundError } from "../utils/errorHandler.js";
+import * as jobService from "../services/job.service.js";
 
-// @desc    Get all jobs
+// @desc    Get all jobs with filters
 // @route   GET /api/jobs
 // @access  Public
-export const getAllJobs = async (req, res) => {
+export const getAllJobs = async (req, res, next) => {
     try {
-        // Build filters using utility
-        const filters = buildJobFilters(req.query);
-
-        // Build pagination and sorting
-        const { page, limit, skip } = buildPagination(req.query);
-        const sort = buildSort(req.query);
-
-        // Execute query
-        const jobs = await Job.find(filters)
-            .populate("company", "name logo location")
-            .populate("postedBy", "name email")
-            .limit(limit)
-            .skip(skip)
-            .sort(sort);
-
-        const total = await Job.countDocuments(filters);
+        const { jobs, pagination } = await jobService.getJobs(req.query);
 
         res.status(200).json({
             success: true,
             data: jobs,
-            pagination: {
-                page,
-                limit,
-                total,
-                pages: Math.ceil(total / limit),
-            },
+            pagination,
         });
     } catch (error) {
-        console.error("Get all jobs error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error: " + error.message,
-        });
+        next(error);
     }
 };
 
 // @desc    Get single job
 // @route   GET /api/jobs/:id
 // @access  Public
-export const getJob = async (req, res) => {
+export const getJob = async (req, res, next) => {
     try {
-        const job = await Job.findById(req.params.id)
-            .populate("company", "name logo location description industry size website")
-            .populate("postedBy", "name email");
-
-        if (!job) {
-            throw new NotFoundError("Job");
-        }
+        const job = await jobService.getJobById(req.params.id);
 
         res.status(200).json({
             success: true,
             data: job,
         });
     } catch (error) {
-        if (error instanceof NotFoundError) {
-            return res.status(404).json({ success: false, message: error.message });
-        }
-        console.error("Get job error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
+        next(error);
     }
 };
 
 // @desc    Create job
 // @route   POST /api/jobs
 // @access  Private (Recruiter/Admin)
-export const createJob = async (req, res) => {
+export const createJob = async (req, res, next) => {
     try {
-        // Create job with postedBy field
-        // Note: status will default to pending_approval as per model
-        const job = await Job.create({
-            ...req.body,
-            postedBy: req.user.id,
-        });
+        const job = await jobService.createJob(req.body, req.user.id);
 
         res.status(201).json({
             success: true,
@@ -95,45 +46,16 @@ export const createJob = async (req, res) => {
             data: job,
         });
     } catch (error) {
-        console.error("Create job error:", error);
-        res.status(500).json({
-            success: false,
-            message: error.message || "Server error",
-        });
+        next(error);
     }
 };
 
 // @desc    Update job
 // @route   PUT /api/jobs/:id
-// @access  Private (Recruiter/Admin - own jobs)
-export const updateJob = async (req, res) => {
+// @access  Private (Recruiter/Admin)
+export const updateJob = async (req, res, next) => {
     try {
-        let job = await Job.findById(req.params.id);
-
-        if (!job) {
-            throw new NotFoundError("Job");
-        }
-
-        // Check ownership (only job poster or admin can update)
-        if (job.postedBy.toString() !== req.user.id && req.user.role !== "admin") {
-            return res.status(403).json({
-                success: false,
-                message: "Not authorized to update this job",
-            });
-        }
-
-        // If status is being updated to active, ensure it's approved
-        if (req.body.status === 'active' && !job.isApproved && req.user.role !== 'admin') {
-            return res.status(400).json({
-                success: false,
-                message: "Cannot activate job before admin approval",
-            });
-        }
-
-        job = await Job.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true,
-        });
+        const job = await jobService.updateJob(req.params.id, req.body, req.user.id, req.user.role);
 
         res.status(200).json({
             success: true,
@@ -141,62 +63,32 @@ export const updateJob = async (req, res) => {
             data: job,
         });
     } catch (error) {
-        if (error instanceof NotFoundError) {
-            return res.status(404).json({ success: false, message: error.message });
-        }
-        console.error("Update job error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
+        next(error);
     }
 };
 
 // @desc    Delete job
 // @route   DELETE /api/jobs/:id
-// @access  Private (Recruiter/Admin - own jobs)
-export const deleteJob = async (req, res) => {
+// @access  Private (Recruiter/Admin)
+export const deleteJob = async (req, res, next) => {
     try {
-        const job = await Job.findById(req.params.id);
-
-        if (!job) {
-            throw new NotFoundError("Job");
-        }
-
-        // Check ownership
-        if (job.postedBy.toString() !== req.user.id && req.user.role !== "admin") {
-            return res.status(403).json({
-                success: false,
-                message: "Not authorized to delete this job",
-            });
-        }
-
-        await job.deleteOne();
+        await jobService.deleteJob(req.params.id, req.user.id, req.user.role);
 
         res.status(200).json({
             success: true,
             message: "Job deleted successfully",
         });
     } catch (error) {
-        if (error instanceof NotFoundError) {
-            return res.status(404).json({ success: false, message: error.message });
-        }
-        console.error("Delete job error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
+        next(error);
     }
 };
 
 // @desc    Get recruiter's jobs
-// @route   GET /api/jobs/my-jobs
+// @route   GET /api/jobs/my/jobs
 // @access  Private (Recruiter/Admin)
-export const getMyJobs = async (req, res) => {
+export const getMyJobs = async (req, res, next) => {
     try {
-        const jobs = await Job.find({ postedBy: req.user.id })
-            .populate("company", "name logo")
-            .sort({ createdAt: -1 });
+        const jobs = await jobService.getRecruiterJobs(req.user.id);
 
         res.status(200).json({
             success: true,
@@ -204,40 +96,26 @@ export const getMyJobs = async (req, res) => {
             count: jobs.length,
         });
     } catch (error) {
-        console.error("Get my jobs error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
+        next(error);
     }
 };
 
 // @desc    Get today's jobs
 // @route   GET /api/jobs/today
 // @access  Public
-export const getTodaysJobs = async (req, res) => {
+export const getTodaysJobs = async (req, res, next) => {
     try {
         const startOfDay = new Date();
         startOfDay.setHours(0, 0, 0, 0);
 
-        const jobs = await Job.find({
-            status: "active",
-            isApproved: true,
-            createdAt: { $gte: startOfDay },
-        })
-            .populate("company", "name logo location")
-            .sort({ createdAt: -1 });
+        const jobs = await jobService.getJobs({ postedSince: startOfDay, status: 'active' });
 
         res.status(200).json({
             success: true,
-            data: jobs,
-            count: jobs.length,
+            data: jobs.jobs,
+            count: jobs.jobs.length,
         });
     } catch (error) {
-        console.error("Get today's jobs error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error",
-        });
+        next(error);
     }
 };

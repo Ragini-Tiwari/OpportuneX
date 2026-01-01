@@ -1,26 +1,21 @@
 import express from "express";
 import {
-    createApplication,
+    applyToJob,
     getJobApplications,
     getMyApplications,
-    updateApplicationStatus,
-    deleteApplication,
-    bulkUpdateStatus,
-    getApplicationTimeline,
+    updateStatus,
 } from "../controllers/application.controller.js";
 import { protect, authorize } from "../middlewares/auth.js";
+import { ROLES } from "../constants/index.js";
 
 const router = express.Router();
 
 // Protected routes
 router.use(protect);
 
-router.post("/", authorize("candidate"), createApplication);
-router.get("/my", authorize("candidate"), getMyApplications);
-router.get("/job/:jobId", authorize("recruiter", "admin"), getJobApplications);
-router.patch("/:id/status", authorize("recruiter", "admin"), updateApplicationStatus);
-router.patch("/bulk-status", authorize("recruiter", "admin"), bulkUpdateStatus);
-router.get("/:id/timeline", getApplicationTimeline);
-router.delete("/:id", authorize("candidate"), deleteApplication);
+router.post("/", authorize(ROLES.CANDIDATE), applyToJob);
+router.get("/my", authorize(ROLES.CANDIDATE), getMyApplications);
+router.get("/job/:jobId", authorize(ROLES.RECRUITER, ROLES.ADMIN), getJobApplications);
+router.put("/:id/status", authorize(ROLES.RECRUITER, ROLES.ADMIN), updateStatus);
 
 export default router;

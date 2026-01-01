@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { APPLICATION_STATUS } from "../constants/index.js";
 
 const applicationSchema = new mongoose.Schema(
     {
@@ -21,14 +22,14 @@ const applicationSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ["applied", "shortlisted", "interview", "offer", "rejected"],
-            default: "applied",
+            enum: Object.values(APPLICATION_STATUS),
+            default: APPLICATION_STATUS.APPLIED,
         },
         statusHistory: [
             {
                 status: {
                     type: String,
-                    enum: ["applied", "shortlisted", "interview", "offer", "rejected"],
+                    enum: Object.values(APPLICATION_STATUS),
                 },
                 changedBy: {
                     type: mongoose.Schema.Types.ObjectId,
@@ -45,37 +46,18 @@ const applicationSchema = new mongoose.Schema(
             type: Date,
             default: Date.now,
         },
-        interviewDate: Date,
-        offerDetails: {
-            salary: Number,
-            joiningDate: Date,
-            otherDetails: String,
-        },
-        rejectionReason: String,
-        notes: {
-            type: String, // Recruiter's notes
-        },
+        notes: String, // Internal recruiter notes
     },
     {
         timestamps: true,
     }
 );
 
-// Pre-save hook to track status changes
-applicationSchema.pre('save', function (next) {
-    if (this.isModified('status') && !this.isNew) {
-        this.statusHistory.push({
-            status: this.status,
-            changedAt: new Date(),
-            // changedBy will be set by the controller
-        });
-    }
-    next();
-});
-
-// Compound index to prevent duplicate applications
+// Prevent duplicate applications
 applicationSchema.index({ job: 1, applicant: 1 }, { unique: true });
 
-const Application = mongoose.model("Application", applicationSchema);
+// Status tracking index
+applicationSchema.index({ status: 1 });
 
+const Application = mongoose.model("Application", applicationSchema);
 export default Application;

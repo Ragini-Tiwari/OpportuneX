@@ -13,6 +13,7 @@ import RecruiterDashboard from "./pages/RecruiterDashboard";
 import PostJob from "./pages/PostJob";
 import SavedJobs from "./pages/SavedJobs";
 import AdminDashboard from "./pages/AdminDashboard";
+import JobApplications from "./pages/JobApplications";
 
 import Footer from "./components/Footer";
 import BackgroundGrid from "./components/BackgroundGrid";
@@ -45,6 +46,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["recruiter", "admin"]}>
                   <PostJob />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/applications/job/:jobId"
+              element={
+                <ProtectedRoute allowedRoles={["recruiter", "admin"]}>
+                  <JobApplications />
                 </ProtectedRoute>
               }
             />

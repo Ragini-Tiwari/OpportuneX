@@ -20,6 +20,11 @@ export const authService = {
         const response = await api.get("/auth/me");
         return response.data;
     },
+
+    updateProfile: async (profileData) => {
+        const response = await api.put("/auth/profile", profileData);
+        return response.data;
+    },
 };
 
 export const jobService = {
@@ -82,6 +87,21 @@ export const adminService = {
 
     getJobs: async () => {
         const response = await api.get("/admin/jobs");
+        return response.data;
+    },
+
+    approveJob: async (id, status) => {
+        const response = await api.patch(`/admin/jobs/${id}/approve`, { status });
+        return response.data;
+    },
+
+    toggleUserBlock: async (id) => {
+        const response = await api.patch(`/admin/users/${id}/block`);
+        return response.data;
+    },
+
+    getLogs: async () => {
+        const response = await api.get("/admin/logs");
         return response.data;
     },
 };

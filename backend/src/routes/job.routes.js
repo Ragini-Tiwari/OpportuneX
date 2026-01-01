@@ -8,11 +8,8 @@ import {
     getMyJobs,
     getTodaysJobs,
 } from "../controllers/job.controller.js";
-import {
-    toggleSavedJob,
-    getSavedJobs,
-} from "../controllers/savedJob.controller.js";
 import { protect, authorize } from "../middlewares/auth.js";
+import { ROLES } from "../constants/index.js";
 
 const router = express.Router();
 
@@ -22,14 +19,9 @@ router.get("/today", getTodaysJobs);
 router.get("/:id", getJob);
 
 // Protected routes
-router.post("/", protect, authorize("recruiter", "admin"), createJob);
-router.put("/:id", protect, authorize("recruiter", "admin"), updateJob);
-router.delete("/:id", protect, authorize("recruiter", "admin"), deleteJob);
-router.get("/my/jobs", protect, authorize("recruiter", "admin"), getMyJobs);
-
-// Saved jobs routes
-router.get("/saved/all", protect, authorize("candidate"), getSavedJobs);
-router.post("/:id/save", protect, authorize("candidate"), toggleSavedJob);
-
+router.post("/", protect, authorize(ROLES.RECRUITER, ROLES.ADMIN), createJob);
+router.put("/:id", protect, authorize(ROLES.RECRUITER, ROLES.ADMIN), updateJob);
+router.delete("/:id", protect, authorize(ROLES.RECRUITER, ROLES.ADMIN), deleteJob);
+router.get("/my/jobs", protect, authorize(ROLES.RECRUITER, ROLES.ADMIN), getMyJobs);
 
 export default router;

@@ -36,7 +36,7 @@ const Jobs = () => {
             });
 
             const response = await jobService.getAllJobs(params);
-            setJobs(response.data);
+            setJobs(response.data || []);
         } catch (error) {
             toast.error("Failed to fetch jobs");
         } finally {

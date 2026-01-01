@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { JOB_STATUS, WORK_MODES, JOB_TYPES } from "../constants/index.js";
 
 const jobSchema = new mongoose.Schema(
     {
@@ -10,12 +11,12 @@ const jobSchema = new mongoose.Schema(
         company: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Company",
-            required: [true, "Company is required"],
+            required: function () { return !this.isExternal; },
         },
         companyName: {
             type: String,
             trim: true,
-            // Fallback for display if Company ref is not populated
+            required: [true, "Company name is required"],
         },
         description: {
             type: String,
@@ -32,70 +33,41 @@ const jobSchema = new mongoose.Schema(
         },
         jobType: {
             type: String,
-            enum: ["Full-time", "Part-time", "Contract", "Internship"],
-            default: "Full-time",
+            enum: Object.values(JOB_TYPES),
+            default: JOB_TYPES.FULL_TIME,
         },
         workMode: {
             type: String,
-            enum: ["Remote", "Onsite", "Hybrid"],
-            default: "Onsite",
+            enum: Object.values(WORK_MODES),
+            default: WORK_MODES.ONSITE,
         },
         salary: {
-            min: {
-                type: Number,
-                default: 0,
-            },
-            max: {
-                type: Number,
-                default: 0,
-            },
-            currency: {
-                type: String,
-                default: "USD",
-            },
+            min: { type: Number, default: 0 },
+            max: { type: Number, default: 0 },
+            currency: { type: String, default: "USD" },
         },
         skills: [String],
         experience: {
-            min: {
-                type: Number,
-                default: 0,
-            },
-            max: {
-                type: Number,
-                default: 0,
-            },
+            min: { type: Number, default: 0 },
+            max: { type: Number, default: 0 },
         },
         category: {
             type: String,
-            enum: [
-                "Engineering",
-                "Design",
-                "Marketing",
-                "Sales",
-                "Product",
-                "Operations",
-                "HR",
-                "Finance",
-                "Other",
-            ],
             default: "Other",
         },
         postedBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: true,
+            required: function () { return !this.isExternal; },
         },
         status: {
             type: String,
-            enum: ["active", "closed", "draft", "pending_approval"],
-            default: "pending_approval",
+            enum: Object.values(JOB_STATUS),
+            default: JOB_STATUS.PENDING,
         },
-        applicationDeadline: {
-            type: Date,
-        },
-        applicationsCount: {
-            type: Number,
-            default: 0,
+        isApproved: {
+            type: Boolean,
+            default: false,
         },
         isExternal: {
             type: Boolean,
@@ -103,22 +75,21 @@ const jobSchema = new mongoose.Schema(
         },
         externalUrl: {
             type: String,
-            // URL for external job applications
+            validate: {
+                validator: function (v) {
+                    return !this.isExternal || (v && v.length > 0);
+                },
+                message: "External URL is required for external jobs",
+            },
         },
         source: {
             type: String,
             enum: ["internal", "greenhouse", "lever"],
             default: "internal",
         },
-        benefits: [String],
-        isApproved: {
-            type: Boolean,
-            default: false,
-        },
-        approvedBy: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
-        },
+        applicationDeadline: Date,
+        applicationsCount: { type: Number, default: 0 },
+        approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
         approvedAt: Date,
     },
     {
@@ -126,15 +97,14 @@ const jobSchema = new mongoose.Schema(
     }
 );
 
-// Index for search optimization
+// Search Indexes
 jobSchema.index({ title: "text", description: "text", companyName: "text", skills: "text" });
 
-// Additional indexes for filtering
-jobSchema.index({ isExternal: 1, source: 1 });
+// Filter Indexes
 jobSchema.index({ isApproved: 1, status: 1 });
+jobSchema.index({ isExternal: 1, source: 1 });
 jobSchema.index({ company: 1 });
+jobSchema.index({ createdAt: -1 });
 
 const Job = mongoose.model("Job", jobSchema);
-
 export default Job;
-
