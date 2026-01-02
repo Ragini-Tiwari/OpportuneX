@@ -3,7 +3,7 @@ import { Twitter, Facebook, Instagram, Github } from "lucide-react";
 
 const Footer = () => {
     return (
-        <footer className="bg-black-950 border-t border-white/10 mt-auto relative z-50">
+        <footer className="bg-black-950/10 backdrop-blur-sm border-t border-white/10 mt-auto relative z-50">
             <div className="container mx-auto px-4 py-12">
                 {/* Main Row: Logo - Nav - Socials */}
                 <div className="flex flex-col lg:flex-row items-center justify-between gap-8 mb-16 px-4">
