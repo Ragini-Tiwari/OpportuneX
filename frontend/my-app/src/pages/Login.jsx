@@ -33,7 +33,14 @@ const Login = () => {
                 navigate("/jobs");
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || "Login failed");
+            console.error("Login error:", error);
+            if (!error.response) {
+                // Network error or server is down
+                toast.error("Unable to connect to server. Please ensure the backend is running.");
+            } else {
+                // Server returned an error (e.g., 401 Unauthorized)
+                toast.error(error.response?.data?.message || "Login failed");
+            }
         } finally {
             setIsLoading(false);
         }
