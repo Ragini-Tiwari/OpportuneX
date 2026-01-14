@@ -25,7 +25,7 @@ const Footer = () => {
                             <span className="text-gray-100">OpportuneX</span>
                         </Link>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-                            Empowering developers to build the future together. The ultimate platform for collaboration, innovation, and growth powered by AI.
+                            Connecting exceptional talent with leading companies. The ultimate platform for career growth and smart recruitment.
                         </p>
                         <div className="flex items-center gap-4">
                             <a href="#" className="text-gray-400 hover:text-white transition-colors">

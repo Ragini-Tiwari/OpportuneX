@@ -24,46 +24,41 @@ export const protect = async (req, res, next) => {
             message: "Not authorized to access this route",
         });
     }
+    import { ClerkExpressRequireAuth } from '@clerk/clerk-sdk-node';
 
-    try {
-        // Verify token
-        const decoded = verifyToken(token);
-
-        if (!decoded) {
-            return res.status(401).json({
-                success: false,
-                message: "Invalid or expired token",
-            });
+    // Protect middleware using Clerk
+    export const protect = [
+        ClerkExpressRequireAuth(),
+        (req, res, next) => {
+            // Map Clerk auth object to req.user for compatibility
+            if (req.auth) {
+                req.user = {
+                    _id: req.auth.userId,
+                    // Extract role from public metadata if configured in Clerk, else default
+                    role: req.auth.sessionClaims?.publicMetadata?.role || "candidate",
+                    email: req.auth.sessionClaims?.email
+                };
+            }
+            next();
         }
+    ];
 
-        // Get user from token
-        req.user = await User.findById(decoded.id).select("-password");
+    // Grant access to specific roles
+    export const authorize = (...roles) => {
+        return (req, res, next) => {
+            if (!req.user) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Not authorized to access this route",
+                });
+            }
 
-        if (!req.user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-
-        next();
-    } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: "Not authorized to access this route",
-        });
-    }
-};
-
-// Authorize roles
-export const authorize = (...roles) => {
-    return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({
-                success: false,
-                message: `User role '${req.user.role}' is not authorized to access this route`,
-            });
-        }
-        next();
+            if (!roles.includes(req.user.role)) {
+                return res.status(403).json({
+                    success: false,
+                    message: `User role ${req.user.role} is not authorized to access this route`,
+                });
+            }
+            next();
+        };
     };
-};
