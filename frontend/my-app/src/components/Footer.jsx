@@ -45,29 +45,29 @@ const Footer = () => {
 
                     {/* Product Column */}
                     <div>
-                        <h3 className="text-gray-100 font-bold mb-6">Product</h3>
+                        <h3 className="text-gray-100 font-bold mb-6">Platform</h3>
                         <ul className="space-y-4">
                             <li>
-                                <Link to="/collab-hub" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
-                                    Collab Hub
+                                <Link to="/jobs" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
+                                    Browse Jobs
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/post-job" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm flex items-center gap-2">
+                                    Post a Job
+                                    <span className="text-[10px] font-bold bg-[#10b981]/10 text-[#34d399] px-2 py-0.5 rounded-full border border-[#10b981]/20">
+                                        Hot
+                                    </span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/companies" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
+                                    Top Companies
                                 </Link>
                             </li>
                             <li>
                                 <Link to="/dashboard" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
-                                    Dashboard
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/blog" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
-                                    Tech Blog
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/roadmap" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm flex items-center gap-2">
-                                    Roadmap
-                                    <span className="text-[10px] font-bold bg-[#10b981]/10 text-[#34d399] px-2 py-0.5 rounded-full border border-[#10b981]/20">
-                                        New
-                                    </span>
+                                    Recruiter Dashboard
                                 </Link>
                             </li>
                         </ul>
@@ -75,26 +75,26 @@ const Footer = () => {
 
                     {/* Resources Column */}
                     <div>
-                        <h3 className="text-gray-100 font-bold mb-6">Resources</h3>
+                        <h3 className="text-gray-100 font-bold mb-6">Support</h3>
                         <ul className="space-y-4">
-                            <li>
-                                <Link to="/documentation" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
-                                    Documentation
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/community-rules" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
-                                    Community Rules
-                                </Link>
-                            </li>
                             <li>
                                 <Link to="/help" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
                                     Help Center
                                 </Link>
                             </li>
                             <li>
+                                <Link to="/careers" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
+                                    Career Advice
+                                </Link>
+                            </li>
+                            <li>
                                 <Link to="/privacy" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
                                     Privacy Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/terms" className="text-gray-400 hover:text-[#10b981] transition-colors text-sm">
+                                    Terms of Service
                                 </Link>
                             </li>
                         </ul>
