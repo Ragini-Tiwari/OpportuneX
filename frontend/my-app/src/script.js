@@ -1,6 +1,4 @@
-// =======================
-// Basic interactivity
-// =======================
+
 
 // Handle search button
 document.querySelector(".filters button").addEventListener("click", () => {
@@ -14,9 +12,7 @@ document.querySelectorAll(".apply-btn").forEach((btn) => {
   });
 });
 
-// =======================
-// Scroll animations using Intersection Observer
-// =======================
+
 const jobCards = document.querySelectorAll(".job-card");
 
 const observer = new IntersectionObserver(
@@ -34,8 +30,8 @@ jobCards.forEach((card) => {
   observer.observe(card);
 });
 // =======================
-// DARK MODE TOGGLE
-// =======================
+
+
 const themeToggle = document.getElementById("theme-toggle");
 
 // Load saved theme
