@@ -1,20 +1,27 @@
 import { Navigate } from "react-router-dom";
-import { useUser } from "@clerk/clerk-react";
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-    const { isSignedIn, user, isLoaded } = useUser();
+    // Check for token in localStorage
+    const token = localStorage.getItem("token");
+    const userStr = localStorage.getItem("user");
 
-    if (!isLoaded) {
-        return <div className="min-h-screen flex items-center justify-center bg-black-950 text-white">Loading...</div>;
+    // Parse user object
+    let user = null;
+    try {
+        if (userStr) {
+            user = JSON.parse(userStr);
+        }
+    } catch (e) {
+        console.error("Error parsing user data", e);
     }
 
-    if (!isSignedIn) {
+    if (!token) {
         return <Navigate to="/login" replace />;
     }
 
-    if (allowedRoles.length > 0) {
-        const userRole = user.publicMetadata?.role || "candidate"; // Default role
-        if (!allowedRoles.includes(userRole)) {
+    if (allowedRoles.length > 0 && user) {
+        if (!allowedRoles.includes(user.role)) {
+            // Redirect to home if role doesn't match
             return <Navigate to="/" replace />;
         }
     }

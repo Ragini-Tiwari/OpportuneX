@@ -1,41 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserButton, useUser, useAuth } from "@clerk/clerk-react";
-import { Briefcase, Menu, X } from "lucide-react";
+import { Briefcase, Menu, X, LogOut, User as UserIcon } from "lucide-react";
 import useAuthStore from "../store/authStore";
 
 const Navbar = () => {
-    const { isSignedIn, user, isLoaded } = useUser();
-    const { getToken } = useAuth();
+    const { user, isAuthenticated, logout } = useAuthStore();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { login } = useAuthStore();
 
-    // Sync Clerk user with local store/backend compatibility
-    useEffect(() => {
-        const syncUser = async () => {
-            if (isSignedIn && user) {
-                const token = await getToken();
-                // Map Clerk attributes to your app's user structure
-                const role = user.publicMetadata?.role || "candidate"; // Default to candidate if role not set
+    const handleLogout = () => {
+        logout();
+        navigate("/login");
+        setIsMenuOpen(false);
+    };
 
-                login({
-                    _id: user.id,
-                    name: user.fullName,
-                    email: user.primaryEmailAddress?.emailAddress,
-                    role: role,
-                    picture: user.imageUrl
-                }, token);
-            }
-        };
-
-        if (isLoaded) {
-            syncUser();
-        }
-    }, [isSignedIn, user, isLoaded, getToken, login]);
-
-    // Fallback role check
-    const userRole = user?.publicMetadata?.role || "candidate";
+    const userRole = user?.role || "candidate";
 
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black-950/50 backdrop-blur-md">
@@ -54,7 +33,7 @@ const Navbar = () => {
                             Jobs
                         </Link>
 
-                        {isSignedIn ? (
+                        {isAuthenticated ? (
                             <>
                                 {userRole === "recruiter" && (
                                     <Link
@@ -93,8 +72,21 @@ const Navbar = () => {
 
                                 <div className="flex items-center gap-4 pl-6 border-l border-white/10">
                                     <div className="flex items-center gap-2 text-gray-300">
-                                        <span className="mr-2">{user?.firstName}</span>
-                                        <UserButton afterSignOutUrl="/" />
+                                        <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
+                                            {user?.picture ? (
+                                                <img src={user.picture} alt="User" className="w-full h-full rounded-full object-cover" />
+                                            ) : (
+                                                <UserIcon size={16} />
+                                            )}
+                                        </div>
+                                        <span className="mr-2">{user?.name}</span>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="text-gray-400 hover:text-red-400 transition-colors bg-white/5 p-2 rounded-full hover:bg-white/10"
+                                            title="Logout"
+                                        >
+                                            <LogOut size={16} />
+                                        </button>
                                     </div>
                                 </div>
                             </>
@@ -138,7 +130,7 @@ const Navbar = () => {
                             Jobs
                         </Link>
 
-                        {isSignedIn ? (
+                        {isAuthenticated ? (
                             <>
                                 {userRole === "recruiter" && (
                                     <Link
@@ -178,9 +170,14 @@ const Navbar = () => {
                                 )}
                                 <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                                     <div className="flex items-center gap-2 text-gray-300">
-                                        <span>{user?.fullName}</span>
-                                        <UserButton afterSignOutUrl="/" />
+                                        <span>{user?.name}</span>
                                     </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="flex items-center gap-2 text-red-400 hover:text-red-300"
+                                    >
+                                        Logout <LogOut size={16} />
+                                    </button>
                                 </div>
                             </>
                         ) : (
