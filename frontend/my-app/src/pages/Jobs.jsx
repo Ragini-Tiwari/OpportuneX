@@ -19,16 +19,6 @@ const Jobs = () => {
         location: "",
     });
 
-    useEffect(() => {
-        fetchJobs();
-    }, []);
-
-    useEffect(() => {
-        if (isAuthenticated && user?.role === "candidate") {
-            fetchSavedJobsIds();
-        }
-    }, [isAuthenticated, user]);
-
     const fetchJobs = async (customFilters = {}) => {
         setLoading(true);
         try {
@@ -64,6 +54,18 @@ const Jobs = () => {
     const handleFilterChange = (key, value) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
+
+    useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    useEffect(() => {
+        if (isAuthenticated && user?.role === "candidate") {
+            fetchSavedJobsIds();
+        }
+    }, [isAuthenticated, user]);
+
+
 
     return (
         <div className="min-h-screen relative z-10 pb-12">

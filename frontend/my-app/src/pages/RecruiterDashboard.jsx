@@ -120,7 +120,7 @@ const RecruiterDashboard = () => {
                                                 job.status === "pending_approval" ? "bg-orange-500/20 text-orange-500" :
                                                     "bg-red-500/20 text-red-500"
                                                 }`}>
-                                                {job.status.replace('_', ' ')}
+                                                {job.status?.replace('_', ' ') || 'Unknown'}
                                             </span>
                                         </div>
 
