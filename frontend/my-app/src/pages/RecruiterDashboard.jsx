@@ -29,7 +29,7 @@ const RecruiterDashboard = () => {
             const response = await jobService.getMyJobs();
             setJobs(response.data);
         } catch (error) {
-            toast.error("Failed to fetch jobs");
+            toast.error("Failed to fetch jobs", { id: "fetch_my_jobs_error" });
         } finally {
             setLoading(false);
         }
@@ -117,8 +117,8 @@ const RecruiterDashboard = () => {
                                                 {job.title}
                                             </h3>
                                             <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-black tracking-widest ${job.status === "active" ? "bg-green-500/20 text-green-500" :
-                                                    job.status === "pending_approval" ? "bg-orange-500/20 text-orange-500" :
-                                                        "bg-red-500/20 text-red-500"
+                                                job.status === "pending_approval" ? "bg-orange-500/20 text-orange-500" :
+                                                    "bg-red-500/20 text-red-500"
                                                 }`}>
                                                 {job.status.replace('_', ' ')}
                                             </span>

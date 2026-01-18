@@ -21,6 +21,9 @@ const Jobs = () => {
 
     useEffect(() => {
         fetchJobs();
+    }, []);
+
+    useEffect(() => {
         if (isAuthenticated && user?.role === "candidate") {
             fetchSavedJobsIds();
         }
@@ -38,7 +41,7 @@ const Jobs = () => {
             const response = await jobService.getAllJobs(params);
             setJobs(response.data || []);
         } catch (error) {
-            toast.error("Failed to fetch jobs");
+            toast.error("Failed to fetch jobs", { id: "fetch_jobs_error" });
         } finally {
             setLoading(false);
         }
